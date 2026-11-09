@@ -2,7 +2,7 @@
   <rect width="1200" height="630" fill="#fbfaf7"/>
   <rect x="0" y="0" width="14" height="630" fill="#0d9488"/>
   <g font-family="DejaVu Sans, Inter, system-ui, sans-serif">
-    <text x="90" y="120" font-size="26" fill="#5a5955" letter-spacing="3">W3C SOLID COMMUNITY GROUP · DRAFT REPORT</text>
+    <text x="90" y="120" font-size="26" fill="#5a5955" letter-spacing="3">W3C SOLID COMMUNITY GROUP · DRAFT REPORT · v0.0.1</text>
     <text x="90" y="245" font-size="104" font-weight="bold" fill="#1c1c1a">SolidOS Panes</text>
     <text x="90" y="330" font-size="36" fill="#3a3a37">What a pane is, how SolidOS chooses one,</text>
     <text x="90" y="380" font-size="36" fill="#3a3a37">how panes are registered, and how to write one.</text>
