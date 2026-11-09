@@ -153,7 +153,7 @@
   <section id="context">
     <h3>The context</h3>
     <p>The outliner passes the same context object, of type <code>DataBrowserContext</code> [[PANE-REGISTRY]], to <code>label</code> and <code>render</code>. A few legacy callers inside panes pass other things.</p>
-    <pre class="ts">
+    <pre class="js">
 {
   dom:     HTMLDocument,              // the document to create elements in
   session: {
@@ -161,18 +161,18 @@
     logic:        SolidLogic,         // solid-logic: authn, profile, containers, type indexes
     paneRegistry: PaneRegistry        // the registry this pane was registered in
   },
-  environment?: {                     // set by the host; mashlib 3.0 sets and updates it, plain solid-panes does not
+  environment?: {                     // set by the host: mashlib 3.0 does, plain solid-panes does not
     layout: 'desktop' | 'mobile', layoutPreference, inputMode, theme: 'light' | 'dark',
     viewport: { width, height }
   },
-  getOutliner: (dom) => OutlineManager   // "@@ TODO Remove the use of getOutliner - only here as an interim" (the type's own comment); the folder pane still uses it
+  getOutliner: (dom) => OutlineManager   // marked "@@ TODO Remove" in the type; the folder pane still uses it
 }</pre>
     <p>Panes written for the outliner use <code>context.dom</code> and <code>context.session.store</code>. Many shipped panes also import the store singleton from solid-logic directly; it is the same store.</p>
   </section>
 
   <section id="example-pane" class="informative">
     <h3>A minimal pane</h3>
-    <pre class="ts">
+    <pre class="js">
 import { Namespace } from 'rdflib'
 import type { PaneDefinition } from 'pane-registry'
 import * as UI from 'solid-ui'
@@ -181,7 +181,7 @@ const EX = Namespace('http://example.org/')
 
 const greetingPane: PaneDefinition = {
   name: 'greeting',
-  icon: UI.icons.iconBase + 'noun_339237.svg',   // any icon URL; this one is solid-ui's group icon
+  icon: UI.icons.iconBase + 'noun_339237.svg',   // any icon URL
 
   label (subject, context) {
     const store = context.session.store
