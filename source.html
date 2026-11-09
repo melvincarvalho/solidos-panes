@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SolidOS Panes</title>
+  <meta name="description" content="How SolidOS shows a Solid pod through panes: what a pane is, how one is chosen, how panes are registered, and how to write one.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SolidOS Panes">
+  <meta property="og:description" content="How SolidOS shows a Solid pod through panes: what a pane is, how one is chosen, how panes are registered, and how to write one. Draft Community Group Report, version 0.0.1.">
+  <meta property="og:url" content="https://melvincarvalho.github.io/solidos-panes/">
+  <meta property="og:image" content="https://melvincarvalho.github.io/solidos-panes/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="SolidOS Panes">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SolidOS Panes">
+  <meta name="twitter:description" content="What a pane is, how SolidOS chooses one, how panes are registered, and how to write one.">
+  <meta name="twitter:image" content="https://melvincarvalho.github.io/solidos-panes/og.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://melvincarvalho.github.io/solidos-panes/">
+  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove" defer></script>
+  <script class="remove">
+    // All config options at https://respec.org/docs/
+    var respecConfig = {
+      specStatus: "CG-DRAFT",
+      group: "solid",
+      shortName: "solidos-panes",
+      subtitle: "Version 0.0.1",
+      editors: [
+        { name: "Melvin Carvalho", url: "https://melvincarvalho.com/" }
+      ],
+      github: "https://github.com/melvincarvalho/solidos-panes",
+      edDraftURI: "https://melvincarvalho.github.io/solidos-panes/",
+      license: "w3c-software-doc",
+      lint: { "no-unused-dfns": false },
+      localBiblio: {
+        "SOLIDOS": { title: "SolidOS", href: "https://github.com/SolidOS/solidos", publisher: "SolidOS team" },
+        "PANE-REGISTRY": { title: "pane-registry: PaneDefinition", href: "https://github.com/SolidOS/pane-registry/blob/main/src/index.d.ts", publisher: "SolidOS team" },
+        "SOLID-PANES": { title: "solid-panes", href: "https://github.com/SolidOS/solid-panes", publisher: "SolidOS team" },
+        "CREATE-A-PANE": { title: "Creating a Pane in SolidOS", href: "https://sharontest.solidcommunity.net/public/SolidOS%20Documents/CreateAPane.md", authors: ["Sharon Stratsianis"], date: "2026" },
+        "WORKSPACES": { title: "SolidOS Workspaces", href: "https://sharontest.solidcommunity.net/public/SolidOS%20Documents/Workspaces.md", authors: ["Sharon Stratsianis"], date: "2026" },
+        "SOLID-UI": { title: "solid-ui", href: "https://github.com/SolidOS/solid-ui", publisher: "SolidOS team" },
+        "SOLID-LOGIC": { title: "solid-logic", href: "https://github.com/SolidOS/solid-logic", publisher: "SolidOS team" },
+        "MASHLIB": { title: "mashlib", href: "https://github.com/SolidOS/mashlib", publisher: "SolidOS team" },
+        "RDFLIB": { title: "rdflib.js", href: "https://github.com/linkeddata/rdflib.js", publisher: "linkeddata" },
+        "SOLID-PROTOCOL": { title: "Solid Protocol", href: "https://solidproject.org/TR/protocol", publisher: "W3C Solid Community Group" },
+        "SOLIDOS-MINUTES-2026-11-04": { title: "SolidOS team meeting, 4 November 2026", href: "https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md", publisher: "SolidOS team" }
+      }
+    };
+  </script>
+  <style>
+    pre { font-size: .9em }
+    table.simple td, table.simple th { vertical-align: top }
+  </style>
+</head>
+<body>
+
+<section id="abstract">
+  <p>SolidOS [[SOLIDOS]] is a data browser for Solid pods. It shows any resource on a pod through <em>panes</em>: small, self-contained views that each know how to display one kind of thing. This document describes how SolidOS is put together, what a pane is, how SolidOS decides which pane to show, how panes are registered, and how a pane creates new things. It is written down from the running code, with Sharon Stratsianis's notes on writing a pane as the guide in the last section.</p>
+</section>
+
+<section id="sotd">
+  <p>This is version 0.0.1, dated 9 November 2026. It documents SolidOS as released at the end of September 2026: mashlib 3.0, solid-panes 5.0, pane-registry 5.0, solid-ui 5.0 and solid-logic 6.0. Where this document and the code disagree, the code is right and this document has a bug; please file an issue in this document's repository.</p>
+  <p>The document was written after the SolidOS team meeting of 4 November 2026 [[SOLIDOS-MINUTES-2026-11-04]], where the question of a written pane interface came up. It is not adopted by the SolidOS team.</p>
+</section>
+
+<section id="introduction" class="informative">
+  <h2>Introduction</h2>
+  <p>A Solid pod holds a person's data as web resources: RDF documents, folders (containers), images, PDFs, anything with a URL [[SOLID-PROTOCOL]]. SolidOS is the application that lets a person browse and edit those resources without a separate app for each kind of data. Point it at a URL and it shows the thing at that URL in the most suitable view it has.</p>
+  <p>The views are called panes. A pane for address books shows an address book; a pane for chats shows a chat; a pane for folders shows a file listing; a pane for RDF source shows the triples. The stock build registers 36 of them. When several panes could show the same resource, SolidOS shows one and offers the others as tabs.</p>
+  <p>This document has two audiences: someone who wants to understand what SolidOS does when it opens a URL, and someone who wants to write a pane. <a href="#architecture"></a> to <a href="#creating"></a> are the description. <a href="#writing"></a> is the practical guide.</p>
+</section>
+
+<section id="terminology">
+  <h2>Terminology</h2>
+  <dl>
+    <dt><dfn>subject</dfn></dt>
+    <dd>The RDF resource being displayed, identified by a URL and represented in code as an rdflib <code>NamedNode</code> [[RDFLIB]]. A subject may be a document, a thing inside a document (a URL with a fragment), or a container.</dd>
+    <dt><dfn>store</dfn></dt>
+    <dd>The in-memory RDF graph that SolidOS loads documents into and writes changes through. There is one store per page, shared by all panes.</dd>
+    <dt><dfn>pane</dfn></dt>
+    <dd>A JavaScript object that can say whether it applies to a subject and, if so, render it. Defined in <a href="#the-pane"></a>.</dd>
+    <dt><dfn>pane registry</dfn></dt>
+    <dd>The ordered list of panes known to the page, with lookup by name. Provided by the <code>pane-registry</code> package [[PANE-REGISTRY]].</dd>
+    <dt><dfn>outliner</dfn></dt>
+    <dd>The part of SolidOS that takes a subject, asks the registry which panes apply, and places the chosen pane on the page. Lives in <code>solid-panes/src/outline/</code>.</dd>
+    <dt><dfn>context</dfn></dt>
+    <dd>The object handed to pane calls, carrying the document, the session and the store. Defined in <a href="#context"></a>.</dd>
+    <dt><dfn>workspace</dfn></dt>
+    <dd>A container on the pod, named in the user's preferences file, under which a pane creates new things. See <a href="#creating"></a>.</dd>
+  </dl>
+</section>
+
+<section id="architecture" class="informative">
+  <h2>How SolidOS is put together</h2>
+  <p>SolidOS is a set of npm packages assembled into one browser bundle. Reading from the bottom up:</p>
+  <table class="simple">
+    <thead><tr><th>Package</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td><code>rdflib</code> [[RDFLIB]]</td><td>The RDF store, the fetcher that loads documents into it, and the updater that writes changes back.</td></tr>
+      <tr><td><code>solid-logic</code> [[SOLID-LOGIC]]</td><td>Authentication, the shared store instance, and logic that is not UI: profiles, type indexes, containers, access control helpers.</td></tr>
+      <tr><td><code>solid-ui</code> [[SOLID-UI]]</td><td>Widgets and web components panes build from: forms, tables, login, the sharing dialog, the create ("Add") bar, styles.</td></tr>
+      <tr><td><code>pane-registry</code> [[PANE-REGISTRY]]</td><td>The <code>PaneDefinition</code> type and the registry: <code>register</code>, <code>list</code>, <code>byName</code>.</td></tr>
+      <tr><td><code>solid-panes</code> [[SOLID-PANES]]</td><td>Most of the panes, the outliner that places them, and <code>registerPanes.js</code>, the ordered list that registers them. Some panes live in their own packages and are pulled in here: profile, contacts, chat, folder, issue, meeting, source and activity streams.</td></tr>
+      <tr><td><code>mashlib</code> [[MASHLIB]]</td><td>The bundle a pod serves as its data browser: solid-panes plus the page chrome, shipped as <code>databrowser.html</code>. A server that serves it for its resources shows SolidOS for every one of them.</td></tr>
+    </tbody>
+  </table>
+  <p>Opening a URL goes like this. Importing <code>solid-panes</code> registers the panes (its entry point calls <code>registerPanes</code> at module evaluation) and creates the outliner for the document. mashlib then takes the subject from the page URL and asks the outliner to show it. The outliner makes sure the subject's document is in the store, loading it if needed, asks the registered panes whether they apply, picks one, calls its <code>render</code>, and puts the returned element on the page under a row of tabs for the other applicable panes.</p>
+</section>
+
+<section id="the-pane">
+  <h2>The pane</h2>
+  <p>A pane is a JavaScript object of the type <code>PaneDefinition</code> [[PANE-REGISTRY]]. The type has four non-optional members, <code>name</code>, <code>icon</code>, <code>label</code> and <code>render</code>; the registry itself checks only for <code>name</code> and <code>label</code>. The rest are optional.</p>
+
+  <section id="required-members">
+    <h3>The four members</h3>
+    <dl>
+      <dt><code>name</code>: string</dt>
+      <dd>A short identifier used by <code>byName</code> and in log output. Examples: <code>"contacts"</code>, <code>"folder"</code>, <code>"source"</code>. The registry indexes a pane under its name only if that name is not already taken; nothing enforces uniqueness.</dd>
+      <dt><code>icon</code>: string</dt>
+      <dd>The URL of an icon image, shown on the pane's tab. The type says string; one shipped pane (the human-readable pane) supplies a function of (subject, context) instead, and the tab component accepts that. The tab component also overrides the icon for the profile and social panes.</dd>
+      <dt><code>label</code>(subject, context): string | null</dt>
+      <dd>
+        <p>Decides whether the pane applies to the subject, and names it if so. A truthy return value means the pane applies and the string is used as the tab label and tooltip; <code>null</code>, an empty string or <code>undefined</code> mean it does not (the outliner tests truthiness).</p>
+        <p>The outliner calls <code>label</code> synchronously on every registered pane for every subject shown, and the tab component calls it again per tab, so it should be cheap. An asynchronous <code>label</code> returns a Promise, which is truthy, so the pane would be offered for everything. Shipped labels decide from the store, most often from the subject's <code>rdf:type</code>, and some from the document's content type or from how many statements the store holds about the subject.</p>
+      </dd>
+      <dt><code>render</code>(subject, context, options?): HTMLElement</dt>
+      <dd>
+        <p>Builds the view. The outliner expects one element back, which it inserts into the page and tags with a class; a <code>render</code> that returns nothing breaks that step. Shipped panes create the element from <code>context.dom</code>; one older view uses the global document. Reads and writes go through the store, so that changes reach the pod and other panes see them.</p>
+        <p>The outliner always passes an <code>options</code> object, possibly empty; a few older internal callers omit it. Options are per call: a pane keeps its state in its components or in the RDF, not in <code>options</code>. One shipped view, the trusted-applications view, is called with a <code>null</code> subject by the preferences pane.</p>
+      </dd>
+    </dl>
+  </section>
+
+  <section id="optional-members">
+    <h3>Optional members</h3>
+    <dl>
+      <dt><code>global</code>: boolean</dt>
+      <dd>A pane that is about the session rather than any subject. Set on the home pane and the trusted-applications view. Global panes are never offered as tabs for a subject.</dd>
+      <dt><code>audience</code>: NamedNode[]</dt>
+      <dd>Roles the user must have for the pane to be offered. A role is an <code>rdf:type</code> of the user in their preferences file; a pane passes only if the user has every role it lists. <code>solid:Developer</code> gates the default, N3, RDF/XML and data-content panes; <code>solid:PowerUser</code> gates about a dozen, including chat and meetings. See <a href="#selection"></a>.</dd>
+      <dt><code>shouldGetFocus</code>(subject): boolean</dt>
+      <dd>Lets a pane claim the first tab even when it is not the first applicable pane in registry order. No shipped pane currently implements it.</dd>
+      <dt><code>mintClass</code>: NamedNode and <code>mintNew</code>(context, options): Promise</dt>
+      <dd>Make the pane creatable from the Add bar. See <a href="#creating"></a>.</dd>
+      <dt><code>predicates</code>, <code>classes</code>: { [uri]: number }</dt>
+      <dd>Declared in the type. <code>register</code> indexes <code>predicates</code> into <code>paneForPredicate</code> and ignores <code>classes</code>; no current code in solid-panes, solid-ui or mashlib reads either index. Only the internal pane declares them.</dd>
+      <dt><code>requireQueryButton</code>: boolean</dt>
+      <dd>Set by <code>register</code>'s second argument and read by the outliner to show the query control. <code>register</code> assigns it unconditionally, so a value set on the pane object is overwritten with <code>undefined</code> when, as in the stock build, <code>register</code> is called with one argument.</dd>
+    </dl>
+  </section>
+
+  <section id="context">
+    <h3>The context</h3>
+    <p>The outliner passes the same context object, of type <code>DataBrowserContext</code> [[PANE-REGISTRY]], to <code>label</code> and <code>render</code>. A few legacy callers inside panes pass other things.</p>
+    <pre class="js">
+{
+  dom:     HTMLDocument,              // the document to create elements in
+  session: {
+    store:        LiveStore,          // the shared rdflib store, with fetcher and updater
+    logic:        SolidLogic,         // solid-logic: authn, profile, containers, type indexes
+    paneRegistry: PaneRegistry        // the registry this pane was registered in
+  },
+  environment?: {                     // set by the host: mashlib 3.0 does, plain solid-panes does not
+    layout: 'desktop' | 'mobile', layoutPreference, inputMode, theme: 'light' | 'dark',
+    viewport: { width, height }
+  },
+  getOutliner: (dom) => OutlineManager   // marked "@@ TODO Remove" in the type; the folder pane still uses it
+}</pre>
+    <p>Panes written for the outliner use <code>context.dom</code> and <code>context.session.store</code>. Many shipped panes also import the store singleton from solid-logic directly; it is the same store.</p>
+  </section>
+
+  <section id="example-pane" class="informative">
+    <h3>A minimal pane</h3>
+    <pre class="js">
+import { Namespace } from 'rdflib'
+import type { PaneDefinition } from 'pane-registry'
+import * as UI from 'solid-ui'
+const ns = UI.ns
+const EX = Namespace('http://example.org/')
+
+const greetingPane: PaneDefinition = {
+  name: 'greeting',
+  icon: UI.icons.iconBase + 'noun_339237.svg',   // any icon URL
+
+  label (subject, context) {
+    const store = context.session.store
+    return store.holds(subject, ns.rdf('type'), EX('Greeting')) ? 'Greeting' : null
+  },
+
+  render (subject, context) {
+    const { dom, session: { store } } = context
+    const div = dom.createElement('div')
+    const message = store.any(subject, EX('message'))
+    div.textContent = message ? message.value : 'No message'
+    return div
+  }
+}
+export default greetingPane</pre>
+  </section>
+</section>
+
+<section id="selection">
+  <h2>How SolidOS chooses a pane</h2>
+  <p>Given a subject, the outliner proceeds as follows (<code>getRelevantPanes</code> and <code>getPane</code> in <code>solid-panes/src/outline/manager.js</code>):</p>
+  <ol>
+    <li>If the subject is a container (its URL ends in <code>/</code>) and the store does not yet hold its <code>ldp:contains</code> listing, fetch the container as Turtle and load it.</li>
+    <li>Call <code>label(subject, context)</code> on every registered pane, in registration order. Keep those whose label is truthy, excluding panes marked <code>global</code> and the pane named <code>sharing</code>. These are the <em>relevant panes</em>.</li>
+    <li>If there are none, use the internal pane, which displays the raw data of any subject. With the stock registration this branch is unreachable, because the internal pane's own label is always truthy.</li>
+    <li>Filter the relevant panes by <code>audience</code> against the user's roles. If the filter removes everything, keep the first relevant pane anyway. If the first relevant pane was registered before the first pane that passed the filter, put it back at the front, so the most relevant view is always offered.</li>
+    <li>The pane shown first is the first of these that answers <code>shouldGetFocus(subject)</code> true, otherwise the first in the list. The rest become tabs.</li>
+    <li>Call the chosen pane's <code>render</code>. If it throws synchronously, a panel showing the exception is rendered in its place. A <code>render</code> that returns nothing, or a rejected promise, is not caught.</li>
+  </ol>
+  <p>The outliner can also be told which pane to use: an alt-click forces the internal pane, and callers may pass a required pane or a hidden list, bypassing steps 2 to 5.</p>
+  <p class="note">Because step 2 is first-match in registration order, the order in <code>registerPanes.js</code> is part of the behaviour: a specific pane is registered before the general pane that would also claim its subject. The data-content, source and default panes are 27th, 28th and 33rd of 36 for this reason.</p>
+</section>
+
+<section id="registration">
+  <h2>Registration</h2>
+  <p>The registry is the module <code>pane-registry</code>. <code>register(pane, requireQueryButton?)</code> sets <code>requireQueryButton</code> on the pane, then logs and returns without registering if the pane has no <code>name</code> or no <code>label</code>; otherwise it appends the pane to <code>list</code>, indexes it under its name if that name is free, under its icon if it has one, and under each key of <code>predicates</code>. It does not throw and returns nothing, so a caller cannot tell a refused pane from an accepted one except by the console. <code>byName(name)</code> scans the list and returns the first match, or warns and returns <code>null</code>.</p>
+  <p>In the stock build the whole set is registered when <code>solid-panes</code> is imported: its entry point calls <code>registerPanes(register)</code>, which imports each pane and registers it in a fixed order with the comment "earliest panes have priority". 37 calls are present, one of them conditional on an export that does not exist, so 36 panes are registered; about fifteen more are present but commented out. <code>register</code> is exported from <code>solid-panes</code>, so a host can register further panes at runtime without editing the file.</p>
+</section>
+
+<section id="creating">
+  <h2>Creating new things</h2>
+  <p>A pane that can make a new instance of what it displays, a new chat, address book or tracker, provides <code>mintClass</code>, the RDF class of the thing it creates, and <code>mintNew</code>. The Add bar in solid-ui (<code>src/create/create.ts</code>) lists every registered pane that has <code>mintNew</code> and passes the audience filter; choosing one decides where the thing goes and then calls the pane.</p>
+  <p>Where depends on how the Add bar was opened. Inside the folder pane, the pane passes the current folder: the user is asked for a name, and the new base is <code>folder/name/</code>; no workspace is involved. From the home pane, no folder is passed and a <a>workspace</a> is chosen [[WORKSPACES]]. A workspace is a container the user's preferences file points to with <code>space:workspace</code>, each with a <code>space:uriPrefix</code>. The chooser lists the user's workspaces (master workspaces excluded) and a URL field; with one workspace it is pre-selected, with several the user picks, and with none the user's storage roots are offered as candidates; in every case the user confirms, and "Make a new workspace" is offered, which writes exactly two triples, <code>me space:workspace ws</code> and <code>ws space:uriPrefix prefix</code>, into the preferences file. The new base is then the prefix plus the pane's application path segment plus a timestamped id segment.</p>
+  <p><code>mintNew(context, options)</code> receives, among other things, <code>options.newBase</code>, <code>options.folder</code> (<code>null</code> on the workspace path), <code>options.dom</code>, <code>options.div</code>, <code>options.me</code>, <code>options.noun</code> and <code>options.refreshTarget</code>. It creates the initial resources, sets <code>options.newInstance</code> to the URL of the created subject, and resolves to the options object; the create flow throws if <code>newInstance</code> is missing and reads <code>folder</code>, <code>newBase</code> and <code>refreshTarget</code> off the resolved value. What follows is not navigation: on the folder path, an <code>ldp:contains</code> triple is added to the store and the folder listing refreshed; otherwise a line "Your new X is ready to be set up" with a link to it is appended. Sharon's notes [[CREATE-A-PANE]] add that a sound <code>mintNew</code> validates its inputs and settles the title either from the folder name or as an editable default.</p>
+</section>
+
+<section id="writing" class="informative">
+  <h2>Writing a pane: the practical guide</h2>
+  <p>This section condenses [[CREATE-A-PANE]], Sharon Stratsianis's working notes. Where a step or rule is the editor's rather than hers, it is marked.</p>
+
+  <section>
+    <h3>Steps</h3>
+    <ol>
+      <li>Write <code>label</code> first. Decide from the subject's type in <code>context.session.store</code>; return <code>null</code> for everything else; keep it cheap, it runs for every pane.</li>
+      <li>Write <code>render</code>. Create the root element from <code>context.dom</code>; read and write through the store; keep state in your components or in the RDF, not in <code>options</code>, which may be absent; handle a <code>null</code> subject if your pane can be called that way.</li>
+      <li>If the pane creates things, add <code>mintClass</code> and <code>mintNew</code>; see <a href="#creating"></a>.</li>
+      <li>Import the pane in <code>registerPanes.js</code> and call <code>register</code> at the right place in the order: before any general pane that would also claim your subject.</li>
+      <li>Editor's addition: start from an existing pane of similar shape, and run SolidOS locally with <code>npm start</code> in solid-panes to open a subject of your type.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h3>Rules that keep panes working together</h3>
+    <ul>
+      <li>Keep <code>label</code> cheap; it can be called for several registered panes.</li>
+      <li>Use <code>context.dom</code>, not the global <code>document</code>; use <code>context.session.store</code> for RDF reads and writes.</li>
+      <li>Treat <code>options</code> as optional and per call; read only the values your pane defines. Some callers omit it; a few special-purpose panes receive a <code>null</code> subject.</li>
+      <li>Return one root element from <code>render</code>.</li>
+      <li>Register specific before general; earlier panes win when several can render the same subject.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>Data, vocabularies and prefixes</h3>
+    <p>A pane writes full IRIs; prefixes are only Turtle shorthand. The common namespaces come from solid-ui's <code>ns</code> helper (<code>ns.rdf</code>, <code>ns.dct</code>, <code>ns.foaf</code>, <code>ns.ldp</code>, and so on), which wraps <code>solid-namespace</code>. Prefer an existing vocabulary term whose meaning matches before inventing one; when a new term is genuinely needed, define it narrowly, document it and publish it at a stable IRI. If serialised Turtle should use a particular prefix for a namespace rdflib does not know, register it with <code>store.setPrefixForURI(prefix, namespace)</code>; otherwise rdflib guesses a short prefix, which is only a readability issue.</p>
+  </section>
+
+  <section>
+    <h3>UI: web components and icons</h3>
+    <p>SolidOS leans heavily on custom elements. solid-ui and solid-panes provide reusable ones (providers, dialogs, buttons, headers, form controls, resource actions); check those before writing new. New components are Lit classes decorated with solid-ui's <code>@customElement</code>, named with the pane as prefix (<code>reminder-pane-provider</code>, <code>reminder-pane-create-header</code>), and imported somewhere that runs during pane setup so they register. For a pane built as its own package with Lit components, her questionnaire pane needed two build settings so the components survive bundling: <code>"sideEffects": ["**/*.css", "src/components/**/*.ts"]</code> in <code>package.json</code>, and the components' paths in the toolkit's <code>litDecoratorPaths</code> so decorators are transpiled for consumers. Inside components, Lucide is a common icon choice via <code>unplugin-icons</code> (<code>import '~icons/lucide/pencil'</code>, then <code>&lt;lucide-pencil&gt;</code>), themed through CSS <code>color</code>; the pane's own package must declare the icon dependency. The pane's <code>icon</code> member itself is a URL, in shipped panes one of solid-ui's <code>noun_*.svg</code> files.</p>
+  </section>
+</section>
+
+<section id="conformance">
+  <h2>Conformance</h2>
+  <p>This document describes running code and legislates nothing beyond it. The registry checks only that a pane has a <code>name</code> and a <code>label</code>; every other statement about a pane above describes what the outliner and the stock panes assume or do. A <dfn>conforming pane</dfn> for the purposes of this document is a <code>PaneDefinition</code> with a <code>name</code>, an <code>icon</code>, a <code>label</code> that returns a truthy string or <code>null</code>, and a <code>render</code> that returns one element. A <dfn>conforming host</dfn> registers panes through the registry, selects as in <a href="#selection"></a> unless explicitly directed to a pane, and calls <code>render</code> with a context as in <a href="#context"></a>.</p>
+</section>
+
+<section id="acknowledgements" class="appendix informative">
+  <h2>Acknowledgements</h2>
+  <p>The pane model comes from Tim Berners-Lee's Tabulator and the data browser that grew from it. Sharon Stratsianis wrote the notes the practical guide condenses. The SolidOS team maintains the code this document describes; its members are listed on the <a href="https://solidos.solidcommunity.net/Contacts/">SolidOS project pod</a>. Thanks to the adversarial review that checked every claim in version 0.0.1 against the code.</p>
+</section>
+
+</body>
+</html>

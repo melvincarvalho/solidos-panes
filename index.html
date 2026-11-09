@@ -1,6 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><style>.issue-label{text-transform:initial}
+.warning>p:first-child{margin-top:0}
+.warning{padding:.5em;border-left-width:.5em;border-left-style:solid}
+span.warning{padding:.1em .5em .15em}
+.issue.closed span.issue-number{text-decoration:line-through}
+.issue.closed span.issue-number::after{content:" (Closed)";font-size:smaller}
+.warning{border-color:#f11;border-color:var(--warning-border,#f11);border-width:.2em;border-style:solid;background:#fbe9e9;background:var(--warning-bg,#fbe9e9);color:#000;color:var(--text,#000)}
+.warning-title:before{content:"⚠";font-size:1.3em;float:left;padding-right:.3em;margin-top:-.3em}
+li.task-list-item{list-style:none}
+input.task-list-item-checkbox{margin:0 .35em .25em -1.6em;vertical-align:middle}
+.issue a.respec-gh-label{padding:5px;margin:0 2px 0 2px;font-size:10px;text-transform:none;text-decoration:none;font-weight:700;border-radius:4px;position:relative;bottom:2px;border:none;display:inline-block}</style><style>dfn{cursor:pointer}
+.dfn-panel{position:absolute;z-index:35;min-width:300px;max-width:500px;padding:.5em .75em;margin-top:.6em;font-family:"Helvetica Neue",sans-serif;font-size:small;background:#fff;background:var(--indextable-hover-bg,#fff);color:#000;color:var(--text,#000);box-shadow:0 1em 3em -.4em rgba(0,0,0,.3),0 0 1px 1px rgba(0,0,0,.05);box-shadow:0 1em 3em -.4em var(--tocsidebar-shadow,rgba(0,0,0,.3)),0 0 1px 1px var(--tocsidebar-shadow,rgba(0,0,0,.05));border-radius:2px}
+.dfn-panel:not(.docked)>.caret{position:absolute;top:-9px}
+.dfn-panel:not(.docked)>.caret::after,.dfn-panel:not(.docked)>.caret::before{content:"";position:absolute;border:10px solid transparent;border-top:0;border-bottom:10px solid #fff;border-bottom-color:var(--indextable-hover-bg,#fff);top:0}
+.dfn-panel:not(.docked)>.caret::before{border-bottom:9px solid #a2a9b1;border-bottom-color:var(--indextable-hover-bg,#a2a9b1)}
+.dfn-panel *{margin:0}
+.dfn-panel b{display:block;color:#000;color:var(--text,#000);margin-top:.25em}
+.dfn-panel ul a[href]{color:#333;color:var(--text,#333)}
+.dfn-panel>div{display:flex}
+.dfn-panel a.self-link{font-weight:700;margin-right:auto}
+.dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
+.dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
+.dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel .marker.cddl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
+.dfn-panel a[href]:hover{border-bottom-width:1px}
+.dfn-panel ul{padding:0}
+.dfn-panel li{margin-left:1em}
+.dfn-panel.docked{position:fixed;left:.5em;top:unset;bottom:2em;margin:0 auto;max-width:calc(100vw - .75em * 2 - .5em - .2em * 2);max-height:30vh;overflow:auto}</style><link rel="preconnect" crossorigin="anonymous" href="https://www.w3.org" class="removeOnSave"><link rel="preload" as="script" href="https://www.w3.org/scripts/TR/2021/fixup.js" class="removeOnSave"><link rel="preload" as="style" href="https://www.w3.org/StyleSheets/TR/2021/base.css" class="removeOnSave"><link rel="preload" as="style" href="https://www.w3.org/StyleSheets/TR/2021/dark.css" class="removeOnSave"><link rel="preload" as="image" crossorigin="anonymous" href="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" class="removeOnSave"><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/base.css" class="removeOnSave">
   <meta charset="utf-8">
   <title>SolidOS Panes</title>
   <meta name="description" content="How SolidOS shows a Solid pod through panes: what a pane is, how one is chosen, how panes are registered, and how to write one.">
@@ -18,102 +45,423 @@
   <meta name="twitter:image" content="https://melvincarvalho.github.io/solidos-panes/og.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="canonical" href="https://melvincarvalho.github.io/solidos-panes/">
-  <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove" defer></script>
-  <script class="remove">
-    // All config options at https://respec.org/docs/
-    var respecConfig = {
-      specStatus: "CG-DRAFT",
-      group: "solid",
-      shortName: "solidos-panes",
-      subtitle: "Version 0.0.1",
-      editors: [
-        { name: "Melvin Carvalho", url: "https://melvincarvalho.com/" }
-      ],
-      github: "https://github.com/melvincarvalho/solidos-panes",
-      edDraftURI: "https://melvincarvalho.github.io/solidos-panes/",
-      license: "w3c-software-doc",
-      lint: { "no-unused-dfns": false },
-      localBiblio: {
-        "SOLIDOS": { title: "SolidOS", href: "https://github.com/SolidOS/solidos", publisher: "SolidOS team" },
-        "PANE-REGISTRY": { title: "pane-registry: PaneDefinition", href: "https://github.com/SolidOS/pane-registry/blob/main/src/index.d.ts", publisher: "SolidOS team" },
-        "SOLID-PANES": { title: "solid-panes", href: "https://github.com/SolidOS/solid-panes", publisher: "SolidOS team" },
-        "CREATE-A-PANE": { title: "Creating a Pane in SolidOS", href: "https://sharontest.solidcommunity.net/public/SolidOS%20Documents/CreateAPane.md", authors: ["Sharon Stratsianis"], date: "2026" },
-        "WORKSPACES": { title: "SolidOS Workspaces", href: "https://sharontest.solidcommunity.net/public/SolidOS%20Documents/Workspaces.md", authors: ["Sharon Stratsianis"], date: "2026" },
-        "SOLID-UI": { title: "solid-ui", href: "https://github.com/SolidOS/solid-ui", publisher: "SolidOS team" },
-        "SOLID-LOGIC": { title: "solid-logic", href: "https://github.com/SolidOS/solid-logic", publisher: "SolidOS team" },
-        "MASHLIB": { title: "mashlib", href: "https://github.com/SolidOS/mashlib", publisher: "SolidOS team" },
-        "RDFLIB": { title: "rdflib.js", href: "https://github.com/linkeddata/rdflib.js", publisher: "linkeddata" },
-        "SOLID-PROTOCOL": { title: "Solid Protocol", href: "https://solidproject.org/TR/protocol", publisher: "W3C Solid Community Group" },
-        "SOLIDOS-MINUTES-2026-11-04": { title: "SolidOS team meeting, 4 November 2026", href: "https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md", publisher: "SolidOS team" }
-      }
-    };
-  </script>
+  
+  
   <style>
     pre { font-size: .9em }
     table.simple td, table.simple th { vertical-align: top }
   </style>
-</head>
-<body>
+<link rel="preload" as="script" href="https://www.w3.org/Tools/respec/respec-highlight.js" class="removeOnSave"><style id="respec-ui-styles" class="removeOnSave">.respec-modal .close-button{position:absolute;z-index:inherit;padding:.2em;font-weight:700;cursor:pointer;margin-left:5px;border:none;background:0 0}
+#respec-ui{position:fixed;display:flex;flex-direction:row-reverse;top:20px;right:20px;width:202px;text-align:right;z-index:9000}
+#respec-pill,.respec-info-button{height:2.4em;background:#fff;background:var(--bg,#fff);color:#787878;color:var(--tocnav-normal-text,#787878);border:1px solid #ccc;box-shadow:1px 1px 8px 0 rgba(100,100,100,.5);box-shadow:1px 1px 8px 0 var(--tocsidebar-shadow,rgba(100,100,100,.5));padding:.2em 0}
+.respec-info-button{border:none;opacity:.75;border-radius:2em;margin-right:1em;min-width:3.5em;will-change:opacity}
+.respec-info-button:focus,.respec-info-button:hover{opacity:1;transition:opacity .2s}
+#respec-pill{width:4.8em}
+#respec-pill:not(:disabled){animation:respec-fadein .6s ease-in-out}
+@keyframes respec-fadein{
+from{margin-top:-1.2em;border-radius:50%;border:.2em solid rgba(100,100,100,.5);box-shadow:none;height:4.8em}
+to{margin-top:0;border:1px solid #ccc;border-radius:0;box-shadow:1px 1px 8px 0 rgba(100,100,100,.5);height:2.4em}
+}
+#respec-pill:disabled{margin-top:-1.2em;position:relative;border:none;box-shadow:none;border-radius:50%;width:4.8em;height:4.8em;padding:0}
+#respec-pill:disabled::after{position:absolute;content:'';inset:-.2em;border-radius:50%;border:.2em solid rgba(100,100,100,.5);border-left:.2em solid transparent;animation:respec-spin .5s infinite linear}
+@media (prefers-reduced-motion){
+#respec-pill:not(:disabled){animation:none}
+#respec-pill:disabled::after{animation:none;border-left:.2em solid rgba(100,100,100,.5)}
+}
+@keyframes respec-spin{
+0%{transform:rotate(0)}
+100%{transform:rotate(360deg)}
+}
+.respec-hidden{visibility:hidden;opacity:0;transition:visibility 0s .2s,opacity .2s linear}
+.respec-visible{visibility:visible;opacity:1;transition:opacity .2s linear}
+#respec-pill:focus,#respec-pill:hover{color:#000;background-color:#f5f5f5;transition:color .2s}
+#respec-menu{position:absolute;margin:0;padding:0;font-family:sans-serif;background:var(--bg,#fff);color:var(--text,#000);box-shadow:1px 1px 8px 0 rgba(100,100,100,.5);width:200px;display:none;text-align:left;margin-top:32px;font-size:.8em}
+#respec-menu:not([hidden]){display:block}
+#respec-menu li{list-style-type:none;margin:0;padding:0}
+.respec-save-buttons{display:grid;grid-template-columns:repeat(auto-fill,minmax(47%,2fr));grid-gap:.5cm;padding:.5cm}
+.respec-save-button:link{padding-top:16px;color:var(--def-text,#fff);background:var(--def-bg,#2a5aa8);justify-self:stretch;height:1cm;text-decoration:none;text-align:center;font-size:inherit;border:none;border-radius:.2cm}
+.respec-save-button:link:hover{color:var(--def-text,#fff);background:var(--defrow-border,#2a5aa8);padding:0;margin:0;border:0;padding-top:16px}
+.respec-save-button:link:focus{background:var(--tocnav-active-bg,#193766);color:var(--tocnav-active-text,#000)}
+#respec-pill:focus,#respec-ui button:focus,.respec-option:focus{outline:0;outline-style:none}
+#respec-pill-error{background-color:red;color:#fff}
+#respec-pill-warning{background-color:orange;color:#fff}
+.respec-error-list,.respec-warning-list{margin:0;padding:0;font-family:sans-serif;font-size:.85em}
+.respec-warning-list{background-color:#fffbe6}
+:is(.respec-warning-list,.respec-error-list)>li{list-style-type:none;margin:0;padding:.5em 0;padding-left:2em;padding-right:.5em}
+:is(.respec-warning-list,.respec-error-list)>li+li{margin-top:.5rem}
+:is(.respec-warning-list,.respec-error-list)>li:before{position:absolute;left:.4em}
+:is(.respec-warning-list,.respec-error-list) p{padding:0;margin:0}
+.respec-warning-list>li{color:#5c3b00;border-bottom:thin solid #fff5c2}
+.respec-error-list,.respec-error-list li{background-color:#fff0f0}
+.respec-warning-list>li::before{content:"⚠️"}
+.respec-error-list>li::before{content:"💥"}
+.respec-error-list>li{color:#5c3b00;border-bottom:thin solid #ffd7d7}
+:is(.respec-warning-list,.respec-error-list)>li li{list-style:disc}
+#respec-overlay{display:block;position:fixed;z-index:10000;top:0;left:0;height:100%;width:100%;background:#000}
+.respec-show-overlay{transition:opacity .2s linear;opacity:.5}
+.respec-hide-overlay{transition:opacity .2s linear;opacity:0}
+.respec-modal{display:block;position:fixed;z-index:11000;top:10%;background:var(--bg,#fff);color:var(--text,#000);border:5px solid #666;border-color:var(--tocsidebar-shadow,#666);min-width:20%;padding:0;max-height:80%;overflow-y:auto;margin:0 -.5cm;left:20%;max-width:75%;min-width:60%}
+.respec-modal h3{margin:0;padding:.2em;left:0!important;text-align:center;background:var(--tocsidebar-shadow,#ddd);color:var(--text,#000);font-size:1em}
+#respec-menu button.respec-option{background:var(--bg,#fff);color:var(--text,#000);border:none;width:100%;text-align:left;font-size:inherit;padding:1.2em 1.2em}
+#respec-menu button.respec-option:hover{background-color:var(--tocnav-hover-bg,#eee);color:var(--tocnav-hover-text,#000)}
+.respec-cmd-icon{padding-right:.5em}
+#respec-ui button.respec-option:first-child{margin-top:0}
+#respec-ui button.respec-option:last-child{border:none;border-radius:inherit;margin-bottom:0}
+.respec-button-copy-paste{position:absolute;height:28px;width:40px;cursor:pointer;background-image:linear-gradient(#fcfcfc,#eee);border:1px solid #90b8de;border-left:0;border-radius:0 0 3px 0;-webkit-user-select:none;user-select:none;-webkit-appearance:none;top:0;left:127px}
+@media print{
+#respec-ui{display:none}
+}
+.respec-iframe{width:100%;min-height:550px;height:100%;overflow:hidden;padding:0;margin:0;border:0}
+.respec-iframe:not(.ready){background:url(https://respec.org/xref/loader.gif) no-repeat center}
+.respec-iframe+a[href]{font-size:.9rem;float:right;margin:0 .5em .5em;border-bottom-width:1px}
+p:is(.respec-hint,.respec-occurrences){display:block;margin-top:.5em}
+.respec-plugin{text-align:right;color:rgb(120,120,120,.5);font-size:.6em}</style><style id="respec-mainstyle">@keyframes pop{
+0%{transform:scale(1,1)}
+25%{transform:scale(1.25,1.25);opacity:.75}
+100%{transform:scale(1,1)}
+}
+a.internalDFN{color:inherit;border-bottom:1px solid #99c;text-decoration:none}
+a.externalDFN{color:inherit;border-bottom:1px dotted #ccc;text-decoration:none}
+a.bibref{text-decoration:none}
+.respec-offending-element:target{animation:pop .25s ease-in-out 0s 1}
+.respec-offending-element,a[href].respec-offending-element{text-decoration:red wavy underline}
+@supports not (text-decoration:red wavy underline){
+.respec-offending-element:not(pre){display:inline-block}
+.respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
+}
+#references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
+@media (prefers-color-scheme:dark){
+#references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+}
+body:has(input[name=color-scheme][value=dark]:checked) #references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+cite .bibref{font-style:italic}
+a[href].orcid{padding-left:4px;padding-right:4px}
+a[href].orcid>svg{margin-bottom:-2px}
+ol.tof,ul.tof{list-style:none outside none}
+.caption{margin-top:.5em;font-style:italic}
+#issue-summary>ul{column-count:2}
+#issue-summary li{list-style:none}
+details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}
+details.respec-tests-details>*{padding-right:2em}
+details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}
+details.respec-tests-details[open]>summary{border-bottom:thin solid #cad3e2;padding-left:1em;margin-bottom:1em;line-height:2em}
+details.respec-tests-details>ul{width:100%;margin-top:-.3em}
+details.respec-tests-details>li{padding-left:1em}
+.self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
+aside.example .marker>a.self-link{color:inherit}
+.header-wrapper{display:flex;align-items:baseline}
+:is(h2,h3,h4,h5,h6):not(:where(#toc>h2,#abstract>h2,#sotd>h2,.head>h2)):has(+a.self-link){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(:where(#toch2))+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.8;text-decoration:none}
+:is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§"}
+:is(h2,h3)+a.self-link{top:-.2em}
+:is(h2,h3)+a.self-link::before{color:var(--heading-text)}
+@media (max-width:767px){
+dd{margin-left:0}
+}
+@media print{
+.removeOnSave{display:none}
+}
+body:has(input[name=color-scheme][value=light]:checked),head:not(:has(meta[name=color-scheme][content~=dark]))+body{color-scheme:light}
+body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}</style><link rel="dns-prefetch" crossorigin="anonymous" href="https://api.specref.org" class="removeOnSave"><link rel="preconnect" crossorigin="anonymous" href="https://respec.org" class="removeOnSave"><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/cg-draft"><meta name="color-scheme" content="light"><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/dark.css" disabled="" media=""><meta name="description" content="SolidOS [SOLIDOS] is a data browser for Solid pods. It shows any resource on a pod through panes: small, self-contained views that each know how to display one kind of thing. This document describes how SolidOS is put together, what a pane is, how SolidOS decides which pane to show, how panes are registered, and how a pane creates new things. It is written down from the running code, with Sharon Stratsianis's notes on writing a pane as the guide in the last section."><style>.hljs,body:has(input[name=color-scheme][value=light]:checked) .hljs,head:not(:has(meta[name=color-scheme][content~=dark]))+body .hljs{--base:#fafafa;--mono-1:#383a42;--mono-2:#686b77;--mono-3:#717277;--hue-1:#0b76c5;--hue-2:#336ae3;--hue-3:#a626a4;--hue-4:#42803c;--hue-5:#ca4706;--hue-5-2:#c91243;--hue-6:#986801;--hue-6-2:#9a6a01}
+@media (prefers-color-scheme:dark){
+.hljs{
+  --base: #282c34;
+  --mono-1: #abb2bf;
+  --mono-2: #818896;
+  --mono-3: #5c6370;
+  --hue-1: #56b6c2;
+  --hue-2: #61aeee;
+  --hue-3: #c678dd;
+  --hue-4: #98c379;
+  --hue-5: #e06c75;
+  --hue-5-2: #be5046;
+  --hue-6: #d19a66;
+  --hue-6-2: #e6c07b;
+}
+}
+body:has(input[name=color-scheme][value=dark]:checked) .hljs{
+  --base: #282c34;
+  --mono-1: #abb2bf;
+  --mono-2: #818896;
+  --mono-3: #5c6370;
+  --hue-1: #56b6c2;
+  --hue-2: #61aeee;
+  --hue-3: #c678dd;
+  --hue-4: #98c379;
+  --hue-5: #e06c75;
+  --hue-5-2: #be5046;
+  --hue-6: #d19a66;
+  --hue-6-2: #e6c07b;
+}
+.hljs{display:block;overflow-x:auto;padding:.5em;color:#383a42;color:var(--mono-1,#383a42);background:#fafafa;background:var(--base,#fafafa)}
+.hljs-comment,.hljs-quote{color:#717277;color:var(--mono-3,#717277);font-style:italic}
+.hljs-doctag,.hljs-formula,.hljs-keyword{color:#a626a4;color:var(--hue-3,#a626a4)}
+.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#ca4706;color:var(--hue-5,#ca4706);font-weight:700}
+.hljs-literal{color:#0b76c5;color:var(--hue-1,#0b76c5)}
+.hljs-addition,.hljs-attribute,.hljs-meta-string,.hljs-regexp,.hljs-string{color:#42803c;color:var(--hue-4,#42803c)}
+.hljs-built_in,.hljs-class .hljs-title{color:#9a6a01;color:var(--hue-6-2,#9a6a01)}
+.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#986801;color:var(--hue-6,#986801)}
+.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#336ae3;color:var(--hue-2,#336ae3)}
+.hljs-emphasis{font-style:italic}
+.hljs-strong{font-weight:700}
+.hljs-link{text-decoration:underline}</style><style>var:hover{text-decoration:underline;cursor:pointer}
+var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}
+@media (prefers-color-scheme:dark){
+var.respec-hl{filter:saturate(.9) brightness(.9)}
+}
+var.respec-hl-c1{--bg-color:#f4d200}
+var.respec-hl-c2{--bg-color:#ff87a2}
+var.respec-hl-c3{--bg-color:#96e885}
+var.respec-hl-c4{--bg-color:#3eeed2}
+var.respec-hl-c5{--bg-color:#eacfb6}
+var.respec-hl-c6{--bg-color:#82ddff}
+var.respec-hl-c7{--bg-color:#ffbcf2}
+@media print{
+var.respec-hl{background:0 0;color:#000;box-shadow:unset}
+}</style><style>var[data-type]{position:relative}
+var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
+var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#222}
+var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#222;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
+var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}</style><meta name="monetization" content="$respec.org" class="removeOnSave"><script id="initialUserConfig" type="application/json">{
+  "specStatus": "CG-DRAFT",
+  "group": "solid",
+  "shortName": "solidos-panes",
+  "subtitle": "Version 0.0.1",
+  "editors": [
+    {
+      "name": "Melvin Carvalho",
+      "url": "https://melvincarvalho.com/"
+    }
+  ],
+  "github": "https://github.com/melvincarvalho/solidos-panes",
+  "edDraftURI": "https://melvincarvalho.github.io/solidos-panes/",
+  "license": "w3c-software-doc",
+  "lint": {
+    "no-unused-dfns": false
+  },
+  "localBiblio": {
+    "SOLIDOS": {
+      "title": "SolidOS",
+      "href": "https://github.com/SolidOS/solidos",
+      "publisher": "SolidOS team",
+      "id": "solidos"
+    },
+    "PANE-REGISTRY": {
+      "title": "pane-registry: PaneDefinition",
+      "href": "https://github.com/SolidOS/pane-registry/blob/main/src/index.d.ts",
+      "publisher": "SolidOS team",
+      "id": "pane-registry"
+    },
+    "SOLID-PANES": {
+      "title": "solid-panes",
+      "href": "https://github.com/SolidOS/solid-panes",
+      "publisher": "SolidOS team",
+      "id": "solid-panes"
+    },
+    "CREATE-A-PANE": {
+      "title": "Creating a Pane in SolidOS",
+      "href": "https://sharontest.solidcommunity.net/public/SolidOS%20Documents/CreateAPane.md",
+      "authors": [
+        "Sharon Stratsianis"
+      ],
+      "date": "2026",
+      "id": "create-a-pane"
+    },
+    "WORKSPACES": {
+      "title": "SolidOS Workspaces",
+      "href": "https://sharontest.solidcommunity.net/public/SolidOS%20Documents/Workspaces.md",
+      "authors": [
+        "Sharon Stratsianis"
+      ],
+      "date": "2026",
+      "id": "workspaces"
+    },
+    "SOLID-UI": {
+      "title": "solid-ui",
+      "href": "https://github.com/SolidOS/solid-ui",
+      "publisher": "SolidOS team",
+      "id": "solid-ui"
+    },
+    "SOLID-LOGIC": {
+      "title": "solid-logic",
+      "href": "https://github.com/SolidOS/solid-logic",
+      "publisher": "SolidOS team",
+      "id": "solid-logic"
+    },
+    "MASHLIB": {
+      "title": "mashlib",
+      "href": "https://github.com/SolidOS/mashlib",
+      "publisher": "SolidOS team",
+      "id": "mashlib"
+    },
+    "RDFLIB": {
+      "title": "rdflib.js",
+      "href": "https://github.com/linkeddata/rdflib.js",
+      "publisher": "linkeddata",
+      "id": "rdflib"
+    },
+    "SOLID-PROTOCOL": {
+      "title": "Solid Protocol",
+      "href": "https://solidproject.org/TR/protocol",
+      "publisher": "W3C Solid Community Group",
+      "id": "solid-protocol"
+    },
+    "SOLIDOS-MINUTES-2026-11-04": {
+      "title": "SolidOS team meeting, 4 November 2026",
+      "href": "https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md",
+      "publisher": "SolidOS team",
+      "id": "solidos-minutes-2026-11-04"
+    }
+  },
+  "publishISODate": "2026-11-09T00:00:00.000Z",
+  "generatedSubtitle": "Draft Community Group Report 09 November 2026"
+}</script></head>
+<body class="h-entry toc-inline"><p id="toc-nav"><a id="toc-jump" href="#toc" aria-labelledby="toc-jump-text"><span aria-hidden="true">↑</span> <span id="toc-jump-text">Jump to Table of Contents</span></a><a id="toc-toggle" href="#toc" aria-labelledby="toc-expand-text"><span aria-hidden="true">→</span> <span id="toc-expand-text">Pop Out Sidebar</span></a><a id="toc-theme-toggle" role="radiogroup" aria-label="Select a color scheme">
+          <span aria-hidden="true"><img src="https://www.w3.org/StyleSheets/TR/2021/logos/dark.svg" title="theme toggle icon"></span>
+          <span>
+          <label>
+          <input name="color-scheme" type="radio" value="light">
+          <span>light</span>
+        </label><label>
+          <input name="color-scheme" type="radio" value="dark">
+          <span>dark</span>
+        </label><label>
+          <input name="color-scheme" type="radio" value="auto" checked="">
+          <span>auto</span>
+        </label>
+          </span>
+        </a></p><div id="respec-ui" class="removeOnSave"><button id="respec-pill" aria-controls="respec-menu" aria-expanded="false" aria-haspopup="true" aria-label="ReSpec Menu">ReSpec</button><ul id="respec-menu" role="menu" aria-labelledby="respec-pill" hidden=""><li role="menuitem"><button class="respec-option" id="respec-button-search-specref">
+      <span class="respec-cmd-icon" aria-hidden="true">🔎<!---0.566708%--></span> Search Specref<!---0.566708%-->…
+    </button><!---0.566708%--></li><li role="menuitem"><button class="respec-option" id="respec-button-search-definitions">
+      <span class="respec-cmd-icon" aria-hidden="true">📚<!---0.566708%--></span> Search definitions<!---0.566708%-->…
+    </button><!---0.566708%--></li><li role="menuitem"><button class="respec-option" id="respec-button-about-37.4.1">
+      <span class="respec-cmd-icon" aria-hidden="true">ℹ️<!---0.566708%--></span> About 37.4.1<!---0.566708%-->…
+    </button><!---0.566708%--></li><li role="menuitem"><button class="respec-option" id="respec-button-export">
+      <span class="respec-cmd-icon" aria-hidden="true">💾<!---0.566708%--></span> Export<!---0.566708%-->…
+    </button><!---0.566708%--></li></ul></div><div class="head">
+    <!---0.566708%-->
+    <h1 id="title" class="title">SolidOS Panes</h1><!---0.566708%--> <h2 id="subtitle" class="subtitle">Version 0.0.1</h2><!---0.566708%-->
+    <p id="w3c-state">
+      <a href="https://www.w3.org/standards/types#reports">Draft Community Group Report<!---0.566708%--></a>
+      <time class="dt-published" datetime="2026-11-09">09 November 2026<!---0.566708%--></time>
+    </p>
+    <dl>
+      <!---0.566708%-->
+      <dt>Latest published version:<!---0.566708%--></dt><dd>
+                none<!---0.566708%-->
+              </dd><!---0.566708%-->
+      <dt>Latest editor's draft:<!---0.566708%--></dt><dd><a href="https://melvincarvalho.github.io/solidos-panes/">https://melvincarvalho.github.io/solidos-panes/<!---0.566708%--></a></dd><!---0.566708%-->
+      <!---0.566708%-->
+      <!---0.566708%-->
+      <!---0.566708%-->
+      <!---0.566708%--><!---0.566708%-->
+      <dt>
+                Editor:<!---0.566708%-->
+              </dt><dd class="editor p-author h-card vcard">
+    <a class="u-url url p-name fn" href="https://melvincarvalho.com/">Melvin Carvalho<!---0.566708%--></a><!---0.566708%-->
+  </dd><!---0.566708%--><!---0.566708%-->
+      <!---0.566708%-->
+      <!---0.566708%-->
+      <dt>Feedback:<!---0.566708%--></dt><dd>
+        <a href="https://github.com/melvincarvalho/solidos-panes/">GitHub melvincarvalho/solidos-panes<!---0.566708%--></a>
+        (<a href="https://github.com/melvincarvalho/solidos-panes/pulls/">pull requests</a>,
+        <a href="https://github.com/melvincarvalho/solidos-panes/issues/new/choose">new issue</a>,
+        <a href="https://github.com/melvincarvalho/solidos-panes/issues/">open issues</a>)
+      </dd><!---0.566708%--><!---0.566708%-->
+      <!---0.566708%-->
+    </dl>
+    <!---0.566708%-->
+    <p class="copyright">
+            <a href="https://www.w3.org/policies/#copyright">Copyright</a>
+            ©
+            <!---0.566708%-->2026<!---0.566708%-->
+            <!---0.566708%-->
+            the Contributors to the SolidOS Panes<!---0.566708%-->
+            Specification, published by the
+            <a href="https://www.w3.org/groups/cg/solid">Solid Community Group<!---0.566708%--></a> under the
+            <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>. A human-readable
+                    <a href="https://www.w3.org/community/about/agreements/cla-deed/">summary</a>
+                    is available.
+                  <!---0.566708%-->
+          </p><!---0.566708%-->
+    <hr title="Separator for header">
+  </div>
 
-<section id="abstract">
-  <p>SolidOS [[SOLIDOS]] is a data browser for Solid pods. It shows any resource on a pod through <em>panes</em>: small, self-contained views that each know how to display one kind of thing. This document describes how SolidOS is put together, what a pane is, how SolidOS decides which pane to show, how panes are registered, and how a pane creates new things. It is written down from the running code, with Sharon Stratsianis's notes on writing a pane as the guide in the last section.</p>
+<section id="abstract" class="introductory"><!--OddPage--><h2>Abstract<!---0.566708%--></h2>
+  <p>SolidOS [<cite><a class="bibref" data-link-type="biblio" href="#bib-solidos" title="SolidOS">SOLIDOS<!---0.566708%--></a></cite><!---0.566708%-->] is a data browser for Solid pods. It shows any resource on a pod through <em>panes</em>: small, self-contained views that each know how to display one kind of thing. This document describes how SolidOS is put together, what a pane is, how SolidOS decides which pane to show, how panes are registered, and how a pane creates new things. It is written down from the running code, with Sharon Stratsianis's notes on writing a pane as the guide in the last section.</p>
 </section>
 
-<section id="sotd">
+<section id="sotd" class="introductory"><!--OddPage--><h2>Status of This Document<!---0.566708%--></h2><!---0.566708%--><p>
+      This specification was published by the
+      <a href="https://www.w3.org/groups/cg/solid">Solid Community Group<!---0.566708%--></a>. It is not a W3C Standard nor is it
+      on the W3C Standards Track.
+      
+              Please note that under the
+              <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>
+              there is a limited opt-out and other conditions apply.
+            <!---0.566708%-->
+      Learn more about
+      <a href="https://www.w3.org/community/">W3C Community and Business Groups</a>.
+    </p>
   <p>This is version 0.0.1, dated 9 November 2026. It documents SolidOS as released at the end of September 2026: mashlib 3.0, solid-panes 5.0, pane-registry 5.0, solid-ui 5.0 and solid-logic 6.0. Where this document and the code disagree, the code is right and this document has a bug; please file an issue in this document's repository.</p>
-  <p>The document was written after the SolidOS team meeting of 4 November 2026 [[SOLIDOS-MINUTES-2026-11-04]], where the question of a written pane interface came up. It is not adopted by the SolidOS team.</p>
-</section>
+  <p>The document was written after the SolidOS team meeting of 4 November 2026 [<cite><a class="bibref" data-link-type="biblio" href="#bib-solidos-minutes-2026-11-04" title="SolidOS team meeting, 4 November 2026">SOLIDOS-MINUTES-2026-11-04<!---0.566708%--></a></cite><!---0.566708%-->], where the question of a written pane interface came up. It is not adopted by the SolidOS team.</p>
+<!---0.566708%--><!---0.566708%--><p>
+    <a href="https://github.com/melvincarvalho/solidos-panes/issues/">GitHub Issues</a> are preferred for
+            discussion of this specification.
+          <!---0.566708%-->
+    <!---0.566708%-->
+  </p><!---0.566708%--><!---0.566708%--><!---0.566708%--><!---0.566708%--></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents<!---0.566708%--></h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#abstract">Abstract<!---0.566708%--></a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#sotd">Status of This Document<!---0.566708%--></a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#introduction"><bdi class="secno">1.<!---0.566708%--> </bdi>Introduction</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#terminology"><bdi class="secno">2.<!---0.566708%--> </bdi>Terminology</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#architecture"><bdi class="secno">3.<!---0.566708%--> </bdi>How SolidOS is put together</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#the-pane"><bdi class="secno">4.<!---0.566708%--> </bdi>The pane</a><!---0.566708%--><ol class="toc"><li class="tocline"><a class="tocxref" href="#required-members"><bdi class="secno">4.1<!---0.566708%--> </bdi>The four members</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#optional-members"><bdi class="secno">4.2<!---0.566708%--> </bdi>Optional members</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#context"><bdi class="secno">4.3<!---0.566708%--> </bdi>The context</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#example-pane"><bdi class="secno">4.4<!---0.566708%--> </bdi>A minimal pane</a><!---0.566708%--></li></ol></li><li class="tocline"><a class="tocxref" href="#selection"><bdi class="secno">5.<!---0.566708%--> </bdi>How SolidOS chooses a pane</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#registration"><bdi class="secno">6.<!---0.566708%--> </bdi>Registration</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#creating"><bdi class="secno">7.<!---0.566708%--> </bdi>Creating new things</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#writing"><bdi class="secno">8.<!---0.566708%--> </bdi>Writing a pane: the practical guide</a><!---0.566708%--><ol class="toc"><li class="tocline"><a class="tocxref" href="#steps"><bdi class="secno">8.1<!---0.566708%--> </bdi>Steps</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#rules-that-keep-panes-working-together"><bdi class="secno">8.2<!---0.566708%--> </bdi>Rules that keep panes working together</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#data-vocabularies-and-prefixes"><bdi class="secno">8.3<!---0.566708%--> </bdi>Data, vocabularies and prefixes</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#ui-web-components-and-icons"><bdi class="secno">8.4<!---0.566708%--> </bdi>UI: web components and icons</a><!---0.566708%--></li></ol></li><li class="tocline"><a class="tocxref" href="#conformance"><bdi class="secno">9.<!---0.566708%--> </bdi>Conformance<!---0.566708%--></a><!---0.566708%--><ol class="toc"><li class="tocline"><a class="tocxref" href="#conformance-0"><bdi class="secno">9.1<!---0.566708%--> </bdi>Conformance</a><!---0.566708%--></li></ol></li><li class="tocline"><a class="tocxref" href="#acknowledgements"><bdi class="secno">A.<!---0.566708%--> </bdi>Acknowledgements</a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">B.<!---0.566708%--> </bdi>References<!---0.566708%--></a><!---0.566708%--><ol class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><bdi class="secno">B.1<!---0.566708%--> </bdi>Normative references<!---0.566708%--></a><!---0.566708%--></li><li class="tocline"><a class="tocxref" href="#informative-references"><bdi class="secno">B.2<!---0.566708%--> </bdi>Informative references<!---0.566708%--></a><!---0.566708%--></li></ol></li></ol></nav>
 
-<section id="introduction" class="informative">
-  <h2>Introduction</h2>
-  <p>A Solid pod holds a person's data as web resources: RDF documents, folders (containers), images, PDFs, anything with a URL [[SOLID-PROTOCOL]]. SolidOS is the application that lets a person browse and edit those resources without a separate app for each kind of data. Point it at a URL and it shows the thing at that URL in the most suitable view it has.</p>
+<section id="introduction" class="informative"><!--OddPage--><div class="header-wrapper"><h2 id="x1-introduction"><bdi class="secno">1.<!---0.566708%--> </bdi>Introduction</h2><a class="self-link" href="#introduction" aria-label="Permalink for Section 1."></a></div><p><em>This section is non-normative.<!---0.566708%--></em></p>
+  
+  <p>A Solid pod holds a person's data as web resources: RDF documents, folders (containers), images, PDFs, anything with a URL [<cite><a class="bibref" data-link-type="biblio" href="#bib-solid-protocol" title="Solid Protocol">SOLID-PROTOCOL<!---0.566708%--></a></cite><!---0.566708%-->]. SolidOS is the application that lets a person browse and edit those resources without a separate app for each kind of data. Point it at a URL and it shows the thing at that URL in the most suitable view it has.</p>
   <p>The views are called panes. A pane for address books shows an address book; a pane for chats shows a chat; a pane for folders shows a file listing; a pane for RDF source shows the triples. The stock build registers 36 of them. When several panes could show the same resource, SolidOS shows one and offers the others as tabs.</p>
-  <p>This document has two audiences: someone who wants to understand what SolidOS does when it opens a URL, and someone who wants to write a pane. <a href="#architecture"></a> to <a href="#creating"></a> are the description. <a href="#writing"></a> is the practical guide.</p>
+  <p>This document has two audiences: someone who wants to understand what SolidOS does when it opens a URL, and someone who wants to write a pane. <a href="#architecture" class="sec-ref"><bdi class="secno">3. </bdi>How SolidOS is put together</a> to <a href="#creating" class="sec-ref"><bdi class="secno">7. </bdi>Creating new things</a> are the description. <a href="#writing" class="sec-ref"><bdi class="secno">8. </bdi>Writing a pane: the practical guide</a> is the practical guide.</p>
 </section>
 
-<section id="terminology">
-  <h2>Terminology</h2>
+<section id="terminology"><!--OddPage--><div class="header-wrapper"><h2 id="x2-terminology"><bdi class="secno">2.<!---0.566708%--> </bdi>Terminology</h2><a class="self-link" href="#terminology" aria-label="Permalink for Section 2."></a></div>
+  
   <dl>
-    <dt><dfn>subject</dfn></dt>
-    <dd>The RDF resource being displayed, identified by a URL and represented in code as an rdflib <code>NamedNode</code> [[RDFLIB]]. A subject may be a document, a thing inside a document (a URL with a fragment), or a container.</dd>
-    <dt><dfn>store</dfn></dt>
+    <dt><dfn id="dfn-subject" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">subject</dfn></dt>
+    <dd>The RDF resource being displayed, identified by a URL and represented in code as an rdflib <code>NamedNode</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-rdflib" title="rdflib.js">RDFLIB<!---0.566708%--></a></cite><!---0.566708%-->]. A subject may be a document, a thing inside a document (a URL with a fragment), or a container.</dd>
+    <dt><dfn id="dfn-store" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">store</dfn></dt>
     <dd>The in-memory RDF graph that SolidOS loads documents into and writes changes through. There is one store per page, shared by all panes.</dd>
-    <dt><dfn>pane</dfn></dt>
-    <dd>A JavaScript object that can say whether it applies to a subject and, if so, render it. Defined in <a href="#the-pane"></a>.</dd>
-    <dt><dfn>pane registry</dfn></dt>
-    <dd>The ordered list of panes known to the page, with lookup by name. Provided by the <code>pane-registry</code> package [[PANE-REGISTRY]].</dd>
-    <dt><dfn>outliner</dfn></dt>
+    <dt><dfn id="dfn-pane" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">pane</dfn></dt>
+    <dd>A JavaScript object that can say whether it applies to a subject and, if so, render it. Defined in <a href="#the-pane" class="sec-ref"><bdi class="secno">4. </bdi>The pane</a>.</dd>
+    <dt><dfn id="dfn-pane-registry" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">pane registry</dfn></dt>
+    <dd>The ordered list of panes known to the page, with lookup by name. Provided by the <code>pane-registry</code> package [<cite><a class="bibref" data-link-type="biblio" href="#bib-pane-registry" title="pane-registry: PaneDefinition">PANE-REGISTRY<!---0.566708%--></a></cite><!---0.566708%-->].</dd>
+    <dt><dfn id="dfn-outliner" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">outliner</dfn></dt>
     <dd>The part of SolidOS that takes a subject, asks the registry which panes apply, and places the chosen pane on the page. Lives in <code>solid-panes/src/outline/</code>.</dd>
-    <dt><dfn>context</dfn></dt>
-    <dd>The object handed to pane calls, carrying the document, the session and the store. Defined in <a href="#context"></a>.</dd>
-    <dt><dfn>workspace</dfn></dt>
-    <dd>A container on the pod, named in the user's preferences file, under which a pane creates new things. See <a href="#creating"></a>.</dd>
+    <dt><dfn id="dfn-context" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">context</dfn></dt>
+    <dd>The object handed to pane calls, carrying the document, the session and the store. Defined in <a href="#context" class="sec-ref"><bdi class="secno">4.3 </bdi>The context</a>.</dd>
+    <dt><dfn id="dfn-workspace" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">workspace</dfn></dt>
+    <dd>A container on the pod, named in the user's preferences file, under which a pane creates new things. See <a href="#creating" class="sec-ref"><bdi class="secno">7. </bdi>Creating new things</a>.</dd>
   </dl>
 </section>
 
-<section id="architecture" class="informative">
-  <h2>How SolidOS is put together</h2>
+<section id="architecture" class="informative"><!--OddPage--><div class="header-wrapper"><h2 id="x3-how-solidos-is-put-together"><bdi class="secno">3.<!---0.566708%--> </bdi>How SolidOS is put together</h2><a class="self-link" href="#architecture" aria-label="Permalink for Section 3."></a></div><p><em>This section is non-normative.<!---0.566708%--></em></p>
+  
   <p>SolidOS is a set of npm packages assembled into one browser bundle. Reading from the bottom up:</p>
   <table class="simple">
     <thead><tr><th>Package</th><th>Role</th></tr></thead>
     <tbody>
-      <tr><td><code>rdflib</code> [[RDFLIB]]</td><td>The RDF store, the fetcher that loads documents into it, and the updater that writes changes back.</td></tr>
-      <tr><td><code>solid-logic</code> [[SOLID-LOGIC]]</td><td>Authentication, the shared store instance, and logic that is not UI: profiles, type indexes, containers, access control helpers.</td></tr>
-      <tr><td><code>solid-ui</code> [[SOLID-UI]]</td><td>Widgets and web components panes build from: forms, tables, login, the sharing dialog, the create ("Add") bar, styles.</td></tr>
-      <tr><td><code>pane-registry</code> [[PANE-REGISTRY]]</td><td>The <code>PaneDefinition</code> type and the registry: <code>register</code>, <code>list</code>, <code>byName</code>.</td></tr>
-      <tr><td><code>solid-panes</code> [[SOLID-PANES]]</td><td>Most of the panes, the outliner that places them, and <code>registerPanes.js</code>, the ordered list that registers them. Some panes live in their own packages and are pulled in here: profile, contacts, chat, folder, issue, meeting, source and activity streams.</td></tr>
-      <tr><td><code>mashlib</code> [[MASHLIB]]</td><td>The bundle a pod serves as its data browser: solid-panes plus the page chrome, shipped as <code>databrowser.html</code>. A server that serves it for its resources shows SolidOS for every one of them.</td></tr>
+      <tr><td><code>rdflib</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-rdflib" title="rdflib.js">RDFLIB<!---0.566708%--></a></cite><!---0.566708%-->]</td><td>The RDF store, the fetcher that loads documents into it, and the updater that writes changes back.</td></tr>
+      <tr><td><code>solid-logic</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-solid-logic" title="solid-logic">SOLID-LOGIC<!---0.566708%--></a></cite><!---0.566708%-->]</td><td>Authentication, the shared store instance, and logic that is not UI: profiles, type indexes, containers, access control helpers.</td></tr>
+      <tr><td><code>solid-ui</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-solid-ui" title="solid-ui">SOLID-UI<!---0.566708%--></a></cite><!---0.566708%-->]</td><td>Widgets and web components panes build from: forms, tables, login, the sharing dialog, the create ("Add") bar, styles.</td></tr>
+      <tr><td><code>pane-registry</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-pane-registry" title="pane-registry: PaneDefinition">PANE-REGISTRY<!---0.566708%--></a></cite><!---0.566708%-->]</td><td>The <code>PaneDefinition</code> type and the registry: <code>register</code>, <code>list</code>, <code>byName</code>.</td></tr>
+      <tr><td><code>solid-panes</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-solid-panes" title="solid-panes">SOLID-PANES<!---0.566708%--></a></cite><!---0.566708%-->]</td><td>Most of the panes, the outliner that places them, and <code>registerPanes.js</code>, the ordered list that registers them. Some panes live in their own packages and are pulled in here: profile, contacts, chat, folder, issue, meeting, source and activity streams.</td></tr>
+      <tr><td><code>mashlib</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-mashlib" title="mashlib">MASHLIB<!---0.566708%--></a></cite><!---0.566708%-->]</td><td>The bundle a pod serves as its data browser: solid-panes plus the page chrome, shipped as <code>databrowser.html</code>. A server that serves it for its resources shows SolidOS for every one of them.</td></tr>
     </tbody>
   </table>
   <p>Opening a URL goes like this. Importing <code>solid-panes</code> registers the panes (its entry point calls <code>registerPanes</code> at module evaluation) and creates the outliner for the document. mashlib then takes the subject from the page URL and asks the outliner to show it. The outliner makes sure the subject's document is in the store, loading it if needed, asks the registered panes whether they apply, picks one, calls its <code>render</code>, and puts the returned element on the page under a row of tabs for the other applicable panes.</p>
 </section>
 
-<section id="the-pane">
-  <h2>The pane</h2>
-  <p>A pane is a JavaScript object of the type <code>PaneDefinition</code> [[PANE-REGISTRY]]. The type has four non-optional members, <code>name</code>, <code>icon</code>, <code>label</code> and <code>render</code>; the registry itself checks only for <code>name</code> and <code>label</code>. The rest are optional.</p>
+<section id="the-pane"><!--OddPage--><div class="header-wrapper"><h2 id="x4-the-pane"><bdi class="secno">4.<!---0.566708%--> </bdi>The pane</h2><a class="self-link" href="#the-pane" aria-label="Permalink for Section 4."></a></div>
+  
+  <p>A pane is a JavaScript object of the type <code>PaneDefinition</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-pane-registry" title="pane-registry: PaneDefinition">PANE-REGISTRY<!---0.566708%--></a></cite><!---0.566708%-->]. The type has four non-optional members, <code>name</code>, <code>icon</code>, <code>label</code> and <code>render</code>; the registry itself checks only for <code>name</code> and <code>label</code>. The rest are optional.</p>
 
-  <section id="required-members">
-    <h3>The four members</h3>
+  <section id="required-members"><div class="header-wrapper"><h3 id="x4-1-the-four-members"><bdi class="secno">4.1<!---0.566708%--> </bdi>The four members</h3><a class="self-link" href="#required-members" aria-label="Permalink for Section 4.1"></a></div>
+    
     <dl>
       <dt><code>name</code>: string</dt>
       <dd>A short identifier used by <code>byName</code> and in log output. Examples: <code>"contacts"</code>, <code>"folder"</code>, <code>"source"</code>. The registry indexes a pane under its name only if that name is not already taken; nothing enforces uniqueness.</dd>
@@ -132,17 +480,17 @@
     </dl>
   </section>
 
-  <section id="optional-members">
-    <h3>Optional members</h3>
+  <section id="optional-members"><div class="header-wrapper"><h3 id="x4-2-optional-members"><bdi class="secno">4.2<!---0.566708%--> </bdi>Optional members</h3><a class="self-link" href="#optional-members" aria-label="Permalink for Section 4.2"></a></div>
+    
     <dl>
       <dt><code>global</code>: boolean</dt>
       <dd>A pane that is about the session rather than any subject. Set on the home pane and the trusted-applications view. Global panes are never offered as tabs for a subject.</dd>
       <dt><code>audience</code>: NamedNode[]</dt>
-      <dd>Roles the user must have for the pane to be offered. A role is an <code>rdf:type</code> of the user in their preferences file; a pane passes only if the user has every role it lists. <code>solid:Developer</code> gates the default, N3, RDF/XML and data-content panes; <code>solid:PowerUser</code> gates about a dozen, including chat and meetings. See <a href="#selection"></a>.</dd>
+      <dd>Roles the user must have for the pane to be offered. A role is an <code>rdf:type</code> of the user in their preferences file; a pane passes only if the user has every role it lists. <code>solid:Developer</code> gates the default, N3, RDF/XML and data-content panes; <code>solid:PowerUser</code> gates about a dozen, including chat and meetings. See <a href="#selection" class="sec-ref"><bdi class="secno">5. </bdi>How SolidOS chooses a pane</a>.</dd>
       <dt><code>shouldGetFocus</code>(subject): boolean</dt>
       <dd>Lets a pane claim the first tab even when it is not the first applicable pane in registry order. No shipped pane currently implements it.</dd>
       <dt><code>mintClass</code>: NamedNode and <code>mintNew</code>(context, options): Promise</dt>
-      <dd>Make the pane creatable from the Add bar. See <a href="#creating"></a>.</dd>
+      <dd>Make the pane creatable from the Add bar. See <a href="#creating" class="sec-ref"><bdi class="secno">7. </bdi>Creating new things</a>.</dd>
       <dt><code>predicates</code>, <code>classes</code>: { [uri]: number }</dt>
       <dd>Declared in the type. <code>register</code> indexes <code>predicates</code> into <code>paneForPredicate</code> and ignores <code>classes</code>; no current code in solid-panes, solid-ui or mashlib reads either index. Only the internal pane declares them.</dd>
       <dt><code>requireQueryButton</code>: boolean</dt>
@@ -150,58 +498,56 @@
     </dl>
   </section>
 
-  <section id="context">
-    <h3>The context</h3>
-    <p>The outliner passes the same context object, of type <code>DataBrowserContext</code> [[PANE-REGISTRY]], to <code>label</code> and <code>render</code>. A few legacy callers inside panes pass other things.</p>
-    <pre class="js">
-{
-  dom:     HTMLDocument,              // the document to create elements in
-  session: {
-    store:        LiveStore,          // the shared rdflib store, with fetcher and updater
-    logic:        SolidLogic,         // solid-logic: authn, profile, containers, type indexes
-    paneRegistry: PaneRegistry        // the registry this pane was registered in
+  <section id="context"><div class="header-wrapper"><h3 id="x4-3-the-context"><bdi class="secno">4.3<!---0.566708%--> </bdi>The context</h3><a class="self-link" href="#context" aria-label="Permalink for Section 4.3"></a></div>
+    
+    <p>The outliner passes the same context object, of type <code>DataBrowserContext</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-pane-registry" title="pane-registry: PaneDefinition">PANE-REGISTRY<!---0.566708%--></a></cite><!---0.566708%-->], to <code>label</code> and <code>render</code>. A few legacy callers inside panes pass other things.</p>
+    <pre aria-busy="false"><code class="hljs js">{
+  <span class="hljs-attr">dom</span>:     <span class="hljs-title class_">HTMLDocument</span>,              <span class="hljs-comment">// the document to create elements in</span>
+  <span class="hljs-attr">session</span>: {
+    <span class="hljs-attr">store</span>:        <span class="hljs-title class_">LiveStore</span>,          <span class="hljs-comment">// the shared rdflib store, with fetcher and updater</span>
+    <span class="hljs-attr">logic</span>:        <span class="hljs-title class_">SolidLogic</span>,         <span class="hljs-comment">// solid-logic: authn, profile, containers, type indexes</span>
+    <span class="hljs-attr">paneRegistry</span>: <span class="hljs-title class_">PaneRegistry</span>        <span class="hljs-comment">// the registry this pane was registered in</span>
   },
-  environment?: {                     // set by the host: mashlib 3.0 does, plain solid-panes does not
-    layout: 'desktop' | 'mobile', layoutPreference, inputMode, theme: 'light' | 'dark',
-    viewport: { width, height }
+  environment?: {                     <span class="hljs-comment">// set by the host: mashlib 3.0 does, plain solid-panes does not</span>
+    <span class="hljs-attr">layout</span>: <span class="hljs-string">'desktop'</span> | <span class="hljs-string">'mobile'</span>, layoutPreference, inputMode, <span class="hljs-attr">theme</span>: <span class="hljs-string">'light'</span> | <span class="hljs-string">'dark'</span>,
+    <span class="hljs-attr">viewport</span>: { width, height }
   },
-  getOutliner: (dom) => OutlineManager   // marked "@@ TODO Remove" in the type; the folder pane still uses it
-}</pre>
+  <span class="hljs-attr">getOutliner</span>: <span class="hljs-function">(<span class="hljs-params">dom</span>) =&gt;</span> <span class="hljs-title class_">OutlineManager</span>   <span class="hljs-comment">// marked "@@ TODO Remove" in the type; the folder pane still uses it</span>
+}</code></pre>
     <p>Panes written for the outliner use <code>context.dom</code> and <code>context.session.store</code>. Many shipped panes also import the store singleton from solid-logic directly; it is the same store.</p>
   </section>
 
-  <section id="example-pane" class="informative">
-    <h3>A minimal pane</h3>
-    <pre class="js">
-import { Namespace } from 'rdflib'
-import type { PaneDefinition } from 'pane-registry'
-import * as UI from 'solid-ui'
-const ns = UI.ns
-const EX = Namespace('http://example.org/')
+  <section id="example-pane" class="informative"><div class="header-wrapper"><h3 id="x4-4-a-minimal-pane"><bdi class="secno">4.4<!---0.566708%--> </bdi>A minimal pane</h3><a class="self-link" href="#example-pane" aria-label="Permalink for Section 4.4"></a></div><p><em>This section is non-normative.<!---0.566708%--></em></p>
+    
+    <pre aria-busy="false"><code class="hljs js"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Namespace</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">'rdflib'</span>
+<span class="hljs-keyword">import</span> type { <span class="hljs-title class_">PaneDefinition</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">'pane-registry'</span>
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> <span class="hljs-variable constant_">UI</span> <span class="hljs-keyword">from</span> <span class="hljs-string">'solid-ui'</span>
+<span class="hljs-keyword">const</span> ns = <span class="hljs-variable constant_">UI</span>.<span class="hljs-property">ns</span>
+<span class="hljs-keyword">const</span> <span class="hljs-variable constant_">EX</span> = <span class="hljs-title class_">Namespace</span>(<span class="hljs-string">'http://example.org/'</span>)
 
-const greetingPane: PaneDefinition = {
-  name: 'greeting',
-  icon: UI.icons.iconBase + 'noun_339237.svg',   // any icon URL
+<span class="hljs-keyword">const</span> <span class="hljs-attr">greetingPane</span>: <span class="hljs-title class_">PaneDefinition</span> = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'greeting'</span>,
+  <span class="hljs-attr">icon</span>: <span class="hljs-variable constant_">UI</span>.<span class="hljs-property">icons</span>.<span class="hljs-property">iconBase</span> + <span class="hljs-string">'noun_339237.svg'</span>,   <span class="hljs-comment">// any icon URL</span>
 
-  label (subject, context) {
-    const store = context.session.store
-    return store.holds(subject, ns.rdf('type'), EX('Greeting')) ? 'Greeting' : null
+  <span class="hljs-title function_">label</span> (subject, context) {
+    <span class="hljs-keyword">const</span> store = context.<span class="hljs-property">session</span>.<span class="hljs-property">store</span>
+    <span class="hljs-keyword">return</span> store.<span class="hljs-title function_">holds</span>(subject, ns.<span class="hljs-title function_">rdf</span>(<span class="hljs-string">'type'</span>), <span class="hljs-title function_">EX</span>(<span class="hljs-string">'Greeting'</span>)) ? <span class="hljs-string">'Greeting'</span> : <span class="hljs-literal">null</span>
   },
 
-  render (subject, context) {
-    const { dom, session: { store } } = context
-    const div = dom.createElement('div')
-    const message = store.any(subject, EX('message'))
-    div.textContent = message ? message.value : 'No message'
-    return div
+  <span class="hljs-title function_">render</span> (subject, context) {
+    <span class="hljs-keyword">const</span> { dom, <span class="hljs-attr">session</span>: { store } } = context
+    <span class="hljs-keyword">const</span> div = dom.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">'div'</span>)
+    <span class="hljs-keyword">const</span> message = store.<span class="hljs-title function_">any</span>(subject, <span class="hljs-title function_">EX</span>(<span class="hljs-string">'message'</span>))
+    div.<span class="hljs-property">textContent</span> = message ? message.<span class="hljs-property">value</span> : <span class="hljs-string">'No message'</span>
+    <span class="hljs-keyword">return</span> div
   }
 }
-export default greetingPane</pre>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> greetingPane</code></pre>
   </section>
 </section>
 
-<section id="selection">
-  <h2>How SolidOS chooses a pane</h2>
+<section id="selection"><!--OddPage--><div class="header-wrapper"><h2 id="x5-how-solidos-chooses-a-pane"><bdi class="secno">5.<!---0.566708%--> </bdi>How SolidOS chooses a pane</h2><a class="self-link" href="#selection" aria-label="Permalink for Section 5."></a></div>
+  
   <p>Given a subject, the outliner proceeds as follows (<code>getRelevantPanes</code> and <code>getPane</code> in <code>solid-panes/src/outline/manager.js</code>):</p>
   <ol>
     <li>If the subject is a container (its URL ends in <code>/</code>) and the store does not yet hold its <code>ldp:contains</code> listing, fetch the container as Turtle and load it.</li>
@@ -212,39 +558,39 @@ export default greetingPane</pre>
     <li>Call the chosen pane's <code>render</code>. If it throws synchronously, a panel showing the exception is rendered in its place. A <code>render</code> that returns nothing, or a rejected promise, is not caught.</li>
   </ol>
   <p>The outliner can also be told which pane to use: an alt-click forces the internal pane, and callers may pass a required pane or a hidden list, bypassing steps 2 to 5.</p>
-  <p class="note">Because step 2 is first-match in registration order, the order in <code>registerPanes.js</code> is part of the behaviour: a specific pane is registered before the general pane that would also claim its subject. The data-content, source and default panes are 27th, 28th and 33rd of 36 for this reason.</p>
+  <div class="note" role="note" id="issue-container-generatedID"><div class="note-title marker" id="h-note"><span>Note</span><!---0.566708%--></div><p class="">Because step 2 is first-match in registration order, the order in <code>registerPanes.js</code> is part of the behaviour: a specific pane is registered before the general pane that would also claim its subject. The data-content, source and default panes are 27th, 28th and 33rd of 36 for this reason.</p></div>
 </section>
 
-<section id="registration">
-  <h2>Registration</h2>
+<section id="registration"><!--OddPage--><div class="header-wrapper"><h2 id="x6-registration"><bdi class="secno">6.<!---0.566708%--> </bdi>Registration</h2><a class="self-link" href="#registration" aria-label="Permalink for Section 6."></a></div>
+  
   <p>The registry is the module <code>pane-registry</code>. <code>register(pane, requireQueryButton?)</code> sets <code>requireQueryButton</code> on the pane, then logs and returns without registering if the pane has no <code>name</code> or no <code>label</code>; otherwise it appends the pane to <code>list</code>, indexes it under its name if that name is free, under its icon if it has one, and under each key of <code>predicates</code>. It does not throw and returns nothing, so a caller cannot tell a refused pane from an accepted one except by the console. <code>byName(name)</code> scans the list and returns the first match, or warns and returns <code>null</code>.</p>
   <p>In the stock build the whole set is registered when <code>solid-panes</code> is imported: its entry point calls <code>registerPanes(register)</code>, which imports each pane and registers it in a fixed order with the comment "earliest panes have priority". 37 calls are present, one of them conditional on an export that does not exist, so 36 panes are registered; about fifteen more are present but commented out. <code>register</code> is exported from <code>solid-panes</code>, so a host can register further panes at runtime without editing the file.</p>
 </section>
 
-<section id="creating">
-  <h2>Creating new things</h2>
+<section id="creating"><!--OddPage--><div class="header-wrapper"><h2 id="x7-creating-new-things"><bdi class="secno">7.<!---0.566708%--> </bdi>Creating new things</h2><a class="self-link" href="#creating" aria-label="Permalink for Section 7."></a></div>
+  
   <p>A pane that can make a new instance of what it displays, a new chat, address book or tracker, provides <code>mintClass</code>, the RDF class of the thing it creates, and <code>mintNew</code>. The Add bar in solid-ui (<code>src/create/create.ts</code>) lists every registered pane that has <code>mintNew</code> and passes the audience filter; choosing one decides where the thing goes and then calls the pane.</p>
-  <p>Where depends on how the Add bar was opened. Inside the folder pane, the pane passes the current folder: the user is asked for a name, and the new base is <code>folder/name/</code>; no workspace is involved. From the home pane, no folder is passed and a <a>workspace</a> is chosen [[WORKSPACES]]. A workspace is a container the user's preferences file points to with <code>space:workspace</code>, each with a <code>space:uriPrefix</code>. The chooser lists the user's workspaces (master workspaces excluded) and a URL field; with one workspace it is pre-selected, with several the user picks, and with none the user's storage roots are offered as candidates; in every case the user confirms, and "Make a new workspace" is offered, which writes exactly two triples, <code>me space:workspace ws</code> and <code>ws space:uriPrefix prefix</code>, into the preferences file. The new base is then the prefix plus the pane's application path segment plus a timestamped id segment.</p>
-  <p><code>mintNew(context, options)</code> receives, among other things, <code>options.newBase</code>, <code>options.folder</code> (<code>null</code> on the workspace path), <code>options.dom</code>, <code>options.div</code>, <code>options.me</code>, <code>options.noun</code> and <code>options.refreshTarget</code>. It creates the initial resources, sets <code>options.newInstance</code> to the URL of the created subject, and resolves to the options object; the create flow throws if <code>newInstance</code> is missing and reads <code>folder</code>, <code>newBase</code> and <code>refreshTarget</code> off the resolved value. What follows is not navigation: on the folder path, an <code>ldp:contains</code> triple is added to the store and the folder listing refreshed; otherwise a line "Your new X is ready to be set up" with a link to it is appended. Sharon's notes [[CREATE-A-PANE]] add that a sound <code>mintNew</code> validates its inputs and settles the title either from the folder name or as an editable default.</p>
+  <p>Where depends on how the Add bar was opened. Inside the folder pane, the pane passes the current folder: the user is asked for a name, and the new base is <code>folder/name/</code>; no workspace is involved. From the home pane, no folder is passed and a <a href="#dfn-workspace" class="internalDFN" data-link-type="dfn" id="ref-for-dfn-workspace-1">workspace</a> is chosen [<cite><a class="bibref" data-link-type="biblio" href="#bib-workspaces" title="SolidOS Workspaces">WORKSPACES<!---0.566708%--></a></cite><!---0.566708%-->]. A workspace is a container the user's preferences file points to with <code>space:workspace</code>, each with a <code>space:uriPrefix</code>. The chooser lists the user's workspaces (master workspaces excluded) and a URL field; with one workspace it is pre-selected, with several the user picks, and with none the user's storage roots are offered as candidates; in every case the user confirms, and "Make a new workspace" is offered, which writes exactly two triples, <code>me space:workspace ws</code> and <code>ws space:uriPrefix prefix</code>, into the preferences file. The new base is then the prefix plus the pane's application path segment plus a timestamped id segment.</p>
+  <p><code>mintNew(context, options)</code> receives, among other things, <code>options.newBase</code>, <code>options.folder</code> (<code>null</code> on the workspace path), <code>options.dom</code>, <code>options.div</code>, <code>options.me</code>, <code>options.noun</code> and <code>options.refreshTarget</code>. It creates the initial resources, sets <code>options.newInstance</code> to the URL of the created subject, and resolves to the options object; the create flow throws if <code>newInstance</code> is missing and reads <code>folder</code>, <code>newBase</code> and <code>refreshTarget</code> off the resolved value. What follows is not navigation: on the folder path, an <code>ldp:contains</code> triple is added to the store and the folder listing refreshed; otherwise a line "Your new X is ready to be set up" with a link to it is appended. Sharon's notes [<cite><a class="bibref" data-link-type="biblio" href="#bib-create-a-pane" title="Creating a Pane in SolidOS">CREATE-A-PANE<!---0.566708%--></a></cite><!---0.566708%-->] add that a sound <code>mintNew</code> validates its inputs and settles the title either from the folder name or as an editable default.</p>
 </section>
 
-<section id="writing" class="informative">
-  <h2>Writing a pane: the practical guide</h2>
-  <p>This section condenses [[CREATE-A-PANE]], Sharon Stratsianis's working notes. Where a step or rule is the editor's rather than hers, it is marked.</p>
+<section id="writing" class="informative"><!--OddPage--><div class="header-wrapper"><h2 id="x8-writing-a-pane-the-practical-guide"><bdi class="secno">8.<!---0.566708%--> </bdi>Writing a pane: the practical guide</h2><a class="self-link" href="#writing" aria-label="Permalink for Section 8."></a></div><p><em>This section is non-normative.<!---0.566708%--></em></p>
+  
+  <p>This section condenses [<cite><a class="bibref" data-link-type="biblio" href="#bib-create-a-pane" title="Creating a Pane in SolidOS">CREATE-A-PANE<!---0.566708%--></a></cite><!---0.566708%-->], Sharon Stratsianis's working notes. Where a step or rule is the editor's rather than hers, it is marked.</p>
 
-  <section>
-    <h3>Steps</h3>
+  <section id="steps"><div class="header-wrapper"><h3 id="x8-1-steps"><bdi class="secno">8.1<!---0.566708%--> </bdi>Steps</h3><a class="self-link" href="#steps" aria-label="Permalink for Section 8.1"></a></div>
+    
     <ol>
       <li>Write <code>label</code> first. Decide from the subject's type in <code>context.session.store</code>; return <code>null</code> for everything else; keep it cheap, it runs for every pane.</li>
       <li>Write <code>render</code>. Create the root element from <code>context.dom</code>; read and write through the store; keep state in your components or in the RDF, not in <code>options</code>, which may be absent; handle a <code>null</code> subject if your pane can be called that way.</li>
-      <li>If the pane creates things, add <code>mintClass</code> and <code>mintNew</code>; see <a href="#creating"></a>.</li>
+      <li>If the pane creates things, add <code>mintClass</code> and <code>mintNew</code>; see <a href="#creating" class="sec-ref"><bdi class="secno">7. </bdi>Creating new things</a>.</li>
       <li>Import the pane in <code>registerPanes.js</code> and call <code>register</code> at the right place in the order: before any general pane that would also claim your subject.</li>
       <li>Editor's addition: start from an existing pane of similar shape, and run SolidOS locally with <code>npm start</code> in solid-panes to open a subject of your type.</li>
     </ol>
   </section>
 
-  <section>
-    <h3>Rules that keep panes working together</h3>
+  <section id="rules-that-keep-panes-working-together"><div class="header-wrapper"><h3 id="x8-2-rules-that-keep-panes-working-together"><bdi class="secno">8.2<!---0.566708%--> </bdi>Rules that keep panes working together</h3><a class="self-link" href="#rules-that-keep-panes-working-together" aria-label="Permalink for Section 8.2"></a></div>
+    
     <ul>
       <li>Keep <code>label</code> cheap; it can be called for several registered panes.</li>
       <li>Use <code>context.dom</code>, not the global <code>document</code>; use <code>context.session.store</code> for RDF reads and writes.</li>
@@ -254,26 +600,514 @@ export default greetingPane</pre>
     </ul>
   </section>
 
-  <section>
-    <h3>Data, vocabularies and prefixes</h3>
+  <section id="data-vocabularies-and-prefixes"><div class="header-wrapper"><h3 id="x8-3-data-vocabularies-and-prefixes"><bdi class="secno">8.3<!---0.566708%--> </bdi>Data, vocabularies and prefixes</h3><a class="self-link" href="#data-vocabularies-and-prefixes" aria-label="Permalink for Section 8.3"></a></div>
+    
     <p>A pane writes full IRIs; prefixes are only Turtle shorthand. The common namespaces come from solid-ui's <code>ns</code> helper (<code>ns.rdf</code>, <code>ns.dct</code>, <code>ns.foaf</code>, <code>ns.ldp</code>, and so on), which wraps <code>solid-namespace</code>. Prefer an existing vocabulary term whose meaning matches before inventing one; when a new term is genuinely needed, define it narrowly, document it and publish it at a stable IRI. If serialised Turtle should use a particular prefix for a namespace rdflib does not know, register it with <code>store.setPrefixForURI(prefix, namespace)</code>; otherwise rdflib guesses a short prefix, which is only a readability issue.</p>
   </section>
 
-  <section>
-    <h3>UI: web components and icons</h3>
+  <section id="ui-web-components-and-icons"><div class="header-wrapper"><h3 id="x8-4-ui-web-components-and-icons"><bdi class="secno">8.4<!---0.566708%--> </bdi>UI: web components and icons</h3><a class="self-link" href="#ui-web-components-and-icons" aria-label="Permalink for Section 8.4"></a></div>
+    
     <p>SolidOS leans heavily on custom elements. solid-ui and solid-panes provide reusable ones (providers, dialogs, buttons, headers, form controls, resource actions); check those before writing new. New components are Lit classes decorated with solid-ui's <code>@customElement</code>, named with the pane as prefix (<code>reminder-pane-provider</code>, <code>reminder-pane-create-header</code>), and imported somewhere that runs during pane setup so they register. For a pane built as its own package with Lit components, her questionnaire pane needed two build settings so the components survive bundling: <code>"sideEffects": ["**/*.css", "src/components/**/*.ts"]</code> in <code>package.json</code>, and the components' paths in the toolkit's <code>litDecoratorPaths</code> so decorators are transpiled for consumers. Inside components, Lucide is a common icon choice via <code>unplugin-icons</code> (<code>import '~icons/lucide/pencil'</code>, then <code>&lt;lucide-pencil&gt;</code>), themed through CSS <code>color</code>; the pane's own package must declare the icon dependency. The pane's <code>icon</code> member itself is a URL, in shipped panes one of solid-ui's <code>noun_*.svg</code> files.</p>
   </section>
 </section>
 
-<section id="conformance">
-  <h2>Conformance</h2>
-  <p>This document describes running code and legislates nothing beyond it. The registry checks only that a pane has a <code>name</code> and a <code>label</code>; every other statement about a pane above describes what the outliner and the stock panes assume or do. A <dfn>conforming pane</dfn> for the purposes of this document is a <code>PaneDefinition</code> with a <code>name</code>, an <code>icon</code>, a <code>label</code> that returns a truthy string or <code>null</code>, and a <code>render</code> that returns one element. A <dfn>conforming host</dfn> registers panes through the registry, selects as in <a href="#selection"></a> unless explicitly directed to a pane, and calls <code>render</code> with a context as in <a href="#context"></a>.</p>
-</section>
+<section id="conformance"><!--OddPage--><div class="header-wrapper"><h2 id="x9-conformance"><bdi class="secno">9.<!---0.566708%--> </bdi>Conformance<!---0.566708%--></h2><a class="self-link" href="#conformance" aria-label="Permalink for Section 9."></a></div><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.<!---0.566708%--></p><!---0.566708%-->
+  <section id="conformance-0"><div class="header-wrapper"><h3 id="x9-1-conformance"><bdi class="secno">9.1<!---0.566708%--> </bdi>Conformance</h3><a class="self-link" href="#conformance-0" aria-label="Permalink for Section 9.1"></a></div>
+  <p>This document describes running code and legislates nothing beyond it. The registry checks only that a pane has a <code>name</code> and a <code>label</code>; every other statement about a pane above describes what the outliner and the stock panes assume or do. A <dfn id="dfn-conforming-pane" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">conforming pane</dfn> for the purposes of this document is a <code>PaneDefinition</code> with a <code>name</code>, an <code>icon</code>, a <code>label</code> that returns a truthy string or <code>null</code>, and a <code>render</code> that returns one element. A <dfn id="dfn-conforming-host" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">conforming host</dfn> registers panes through the registry, selects as in <a href="#selection" class="sec-ref"><bdi class="secno">5. </bdi>How SolidOS chooses a pane</a> unless explicitly directed to a pane, and calls <code>render</code> with a context as in <a href="#context" class="sec-ref"><bdi class="secno">4.3 </bdi>The context</a>.</p>
+</section></section>
 
-<section id="acknowledgements" class="appendix informative">
-  <h2>Acknowledgements</h2>
+<section id="acknowledgements" class="appendix informative"><!--OddPage--><div class="header-wrapper"><h2 id="a-acknowledgements"><bdi class="secno">A.<!---0.566708%--> </bdi>Acknowledgements</h2><a class="self-link" href="#acknowledgements" aria-label="Permalink for Appendix A."></a></div><p><em>This section is non-normative.<!---0.566708%--></em></p>
+  
   <p>The pane model comes from Tim Berners-Lee's Tabulator and the data browser that grew from it. Sharon Stratsianis wrote the notes the practical guide condenses. The SolidOS team maintains the code this document describes; its members are listed on the <a href="https://solidos.solidcommunity.net/Contacts/">SolidOS project pod</a>. Thanks to the adversarial review that checked every claim in version 0.0.1 against the code.</p>
 </section>
 
-</body>
-</html>
+
+
+<section id="references" class="appendix"><!--OddPage--><div class="header-wrapper"><h2 id="b-references"><bdi class="secno">B.<!---0.566708%--> </bdi>References<!---0.566708%--></h2><a class="self-link" href="#references" aria-label="Permalink for Appendix B."></a></div><section id="normative-references"><div class="header-wrapper"><h3 id="b-1-normative-references"><bdi class="secno">B.1<!---0.566708%--> </bdi>Normative references<!---0.566708%--></h3><a class="self-link" href="#normative-references" aria-label="Permalink for Appendix B.1"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-create-a-pane">[CREATE-A-PANE<!---0.566708%-->]</dt><dd>
+      <a href="https://sharontest.solidcommunity.net/public/SolidOS%20Documents/CreateAPane.md"><cite>Creating a Pane in SolidOS</cite></a>. Sharon Stratsianis. 2026. URL: <a href="https://sharontest.solidcommunity.net/public/SolidOS%20Documents/CreateAPane.md">https://sharontest.solidcommunity.net/public/SolidOS%20Documents/CreateAPane.md</a><!---0.566708%-->
+    </dd><dt id="bib-pane-registry">[PANE-REGISTRY<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/SolidOS/pane-registry/blob/main/src/index.d.ts"><cite>pane-registry: PaneDefinition</cite></a>.  SolidOS team. URL: <a href="https://github.com/SolidOS/pane-registry/blob/main/src/index.d.ts">https://github.com/SolidOS/pane-registry/blob/main/src/index.d.ts</a><!---0.566708%-->
+    </dd><dt id="bib-rdflib">[RDFLIB<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/linkeddata/rdflib.js"><cite>rdflib.js</cite></a>.  linkeddata. URL: <a href="https://github.com/linkeddata/rdflib.js">https://github.com/linkeddata/rdflib.js</a><!---0.566708%-->
+    </dd><dt id="bib-workspaces">[WORKSPACES<!---0.566708%-->]</dt><dd>
+      <a href="https://sharontest.solidcommunity.net/public/SolidOS%20Documents/Workspaces.md"><cite>SolidOS Workspaces</cite></a>. Sharon Stratsianis. 2026. URL: <a href="https://sharontest.solidcommunity.net/public/SolidOS%20Documents/Workspaces.md">https://sharontest.solidcommunity.net/public/SolidOS%20Documents/Workspaces.md</a><!---0.566708%-->
+    </dd><!---0.566708%--></dl>
+  </section><section id="informative-references"><div class="header-wrapper"><h3 id="b-2-informative-references"><bdi class="secno">B.2<!---0.566708%--> </bdi>Informative references<!---0.566708%--></h3><a class="self-link" href="#informative-references" aria-label="Permalink for Appendix B.2"></a></div>
+    
+    <dl class="bibliography"><dt id="bib-mashlib">[MASHLIB<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/SolidOS/mashlib"><cite>mashlib</cite></a>.  SolidOS team. URL: <a href="https://github.com/SolidOS/mashlib">https://github.com/SolidOS/mashlib</a><!---0.566708%-->
+    </dd><dt id="bib-solid-logic">[SOLID-LOGIC<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/SolidOS/solid-logic"><cite>solid-logic</cite></a>.  SolidOS team. URL: <a href="https://github.com/SolidOS/solid-logic">https://github.com/SolidOS/solid-logic</a><!---0.566708%-->
+    </dd><dt id="bib-solid-panes">[SOLID-PANES<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/SolidOS/solid-panes"><cite>solid-panes</cite></a>.  SolidOS team. URL: <a href="https://github.com/SolidOS/solid-panes">https://github.com/SolidOS/solid-panes</a><!---0.566708%-->
+    </dd><dt id="bib-solid-protocol">[SOLID-PROTOCOL<!---0.566708%-->]</dt><dd>
+      <a href="https://solidproject.org/TR/protocol"><cite>Solid Protocol</cite></a>.  W3C Solid Community Group. URL: <a href="https://solidproject.org/TR/protocol">https://solidproject.org/TR/protocol</a><!---0.566708%-->
+    </dd><dt id="bib-solid-ui">[SOLID-UI<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/SolidOS/solid-ui"><cite>solid-ui</cite></a>.  SolidOS team. URL: <a href="https://github.com/SolidOS/solid-ui">https://github.com/SolidOS/solid-ui</a><!---0.566708%-->
+    </dd><dt id="bib-solidos">[SOLIDOS<!---0.566708%-->]</dt><dd>
+      <a href="https://github.com/SolidOS/solidos"><cite>SolidOS</cite></a>.  SolidOS team. URL: <a href="https://github.com/SolidOS/solidos">https://github.com/SolidOS/solidos</a><!---0.566708%-->
+    </dd><dt id="bib-solidos-minutes-2026-11-04">[SOLIDOS-MINUTES-2026-11-04<!---0.566708%-->]</dt><dd>
+      <a href="https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md"><cite>SolidOS team meeting, 4 November 2026</cite></a>.  SolidOS team. URL: <a href="https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md">https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md</a><!---0.566708%-->
+    </dd><!---0.566708%--></dl>
+  </section></section><p role="navigation" id="back-to-top">
+    <a href="#title"><abbr title="Back to Top">↑</abbr></a>
+  </p><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-subject" aria-label="Links in this document to definition: subject">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-subject" aria-label="Permalink for definition: subject. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-store" aria-label="Links in this document to definition: store">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-store" aria-label="Permalink for definition: store. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-pane" aria-label="Links in this document to definition: pane">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-pane" aria-label="Permalink for definition: pane. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-pane-registry" aria-label="Links in this document to definition: pane registry">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-pane-registry" aria-label="Permalink for definition: pane registry. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-outliner" aria-label="Links in this document to definition: outliner">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-outliner" aria-label="Permalink for definition: outliner. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-context" aria-label="Links in this document to definition: context">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-context" aria-label="Permalink for definition: context. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-workspace" aria-label="Links in this document to definition: workspace">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-workspace" aria-label="Permalink for definition: workspace. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+    <li>
+      <a href="#ref-for-dfn-workspace-1" title="§ 7. Creating new things">§ 7. Creating new things<!---0.566708%--></a> <!---0.566708%--><!---0.566708%-->
+    </li><!---0.566708%-->
+  </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-conforming-pane" aria-label="Links in this document to definition: conforming pane">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-conforming-pane" aria-label="Permalink for definition: conforming pane. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-conforming-host" aria-label="Links in this document to definition: conforming host">
+      <span class="caret"></span>
+      <div>
+        <a class="self-link" href="#dfn-conforming-host" aria-label="Permalink for definition: conforming host. Activate to close this dialog.">Permalink</a>
+        <!---0.566708%--> <!---0.566708%-->
+        <!---0.566708%-->
+      </div>
+      <p><b>Referenced in:</b></p>
+      <ul>
+      <li>Not referenced in this document.</li>
+    </ul><!---0.566708%-->
+    </div><script id="respec-highlight-vars">(() => {
+// @ts-check
+
+if (document.respec) {
+  document.respec.ready.then(setupVarHighlighter);
+} else {
+  setupVarHighlighter();
+}
+
+function setupVarHighlighter() {
+  document
+    .querySelectorAll("var")
+    .forEach(varElem => varElem.addEventListener("click", highlightListener));
+}
+
+/**
+ * @param {MouseEvent} ev
+ */
+function highlightListener(ev) {
+  ev.stopPropagation();
+  const varElem = /** @type {HTMLElement} */ (ev.target);
+  const hightligtedElems = highlightVars(varElem);
+  const resetListener = () => {
+    const hlColor = getHighlightColor(varElem);
+    hightligtedElems.forEach(el => removeHighlight(el, hlColor));
+    [...HL_COLORS.keys()].forEach(key => HL_COLORS.set(key, true));
+  };
+  if (hightligtedElems.length) {
+    document.body.addEventListener("click", resetListener, { once: true });
+  }
+}
+
+// availability of highlight colors. colors from var.css
+const HL_COLORS = new Map([
+  ["respec-hl-c1", true],
+  ["respec-hl-c2", true],
+  ["respec-hl-c3", true],
+  ["respec-hl-c4", true],
+  ["respec-hl-c5", true],
+  ["respec-hl-c6", true],
+  ["respec-hl-c7", true],
+]);
+
+/**
+ * @param {HTMLElement} target
+ */
+function getHighlightColor(target) {
+  // return current colors if applicable
+  const { value } = target.classList;
+  const re = /respec-hl-\w+/;
+  const activeClass = re.test(value) && value.match(re);
+  if (activeClass) return activeClass[0];
+
+  // first color preference
+  if (HL_COLORS.get("respec-hl-c1") === true) return "respec-hl-c1";
+
+  // otherwise get some other available color
+  return [...HL_COLORS.keys()].find(c => HL_COLORS.get(c)) || "respec-hl-c1";
+}
+
+/**
+ * @param {HTMLElement} varElem
+ */
+function highlightVars(varElem) {
+  const textContent = norm(varElem.textContent);
+  const parent = /** @type {HTMLElement} */ (
+    varElem.closest(".algorithm, section")
+  );
+  if (!parent) return [];
+  const highlightColor = getHighlightColor(varElem);
+
+  const varsToHighlight = [...parent.querySelectorAll("var")].filter(
+    el =>
+      norm(el.textContent) === textContent &&
+      el.closest(".algorithm, section") === parent
+  );
+
+  // update availability of highlight color
+  const colorStatus = varsToHighlight[0].classList.contains("respec-hl");
+  HL_COLORS.set(highlightColor, colorStatus);
+
+  // highlight vars
+  if (colorStatus) {
+    varsToHighlight.forEach(el => removeHighlight(el, highlightColor));
+    return [];
+  } else {
+    varsToHighlight.forEach(el => addHighlight(el, highlightColor));
+  }
+  return varsToHighlight;
+}
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} highlightColor
+ */
+function removeHighlight(el, highlightColor) {
+  el.classList.remove("respec-hl", highlightColor);
+  // clean up empty class attributes so they don't come in export
+  if (!el.classList.length) el.removeAttribute("class");
+}
+
+/**
+ * @param {HTMLElement} elem
+ * @param {string} highlightColor
+ */
+function addHighlight(elem, highlightColor) {
+  elem.classList.add("respec-hl", highlightColor);
+}
+
+/**
+ * Same as `norm` from src/core/utils, but our build process doesn't allow
+ * imports in runtime scripts, so duplicated here.
+ * @param {string} str
+ */
+function norm(str) {
+  return str.trim().replace(/\s+/g, " ");
+}
+})()</script><script id="respec-dfn-panel">(() => {
+// @ts-check
+if (document.respec) {
+  document.respec.ready.then(setupPanel);
+} else {
+  setupPanel();
+}
+
+function setupPanel() {
+  const listener = panelListener();
+  document.body.addEventListener("keydown", listener);
+  document.body.addEventListener("click", listener);
+}
+
+function panelListener() {
+  /** @type {HTMLElement | null} */
+  let panel = null;
+  /**
+   * @param {KeyboardEvent|MouseEvent} event
+   */
+  return event => {
+    const { target, type } = event;
+
+    if (!(target instanceof HTMLElement)) return;
+
+    // For keys, we only care about Enter key to activate the panel
+    // otherwise it's activated via a click.
+    if (
+      type === "keydown" &&
+      /** @type {KeyboardEvent} */ (event).key !== "Enter"
+    )
+      return;
+
+    const action = deriveAction(event);
+
+    switch (action) {
+      case "show": {
+        hidePanel(panel);
+        /** @type {HTMLElement | null} */
+        const dfn = target.closest("dfn, .index-term");
+        if (!dfn?.id) break;
+        panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
+        if (!panel) break;
+        const coords = deriveCoordinates(
+          /** @type {MouseEvent|KeyboardEvent} */ (event)
+        );
+        displayPanel(dfn, panel, coords);
+        break;
+      }
+      case "dock": {
+        if (panel) {
+          panel.style.left = "";
+          panel.style.top = "";
+          panel.classList.add("docked");
+        }
+        break;
+      }
+      case "hide": {
+        hidePanel(panel);
+        panel = null;
+        break;
+      }
+    }
+  };
+}
+
+/**
+ * @param {MouseEvent|KeyboardEvent} event
+ */
+function deriveCoordinates(event) {
+  const target = /** @type HTMLElement */ (event.target);
+
+  // We prevent synthetic AT clicks from putting
+  // the dialog in a weird place. The AT events sometimes
+  // lack coordinates, so they have clientX/Y = 0
+  const rect = target.getBoundingClientRect();
+  if (
+    event instanceof MouseEvent &&
+    event.clientX >= rect.left &&
+    event.clientY >= rect.top
+  ) {
+    // The event probably happened inside the bounding rect...
+    return { x: event.clientX, y: event.clientY };
+  }
+
+  // Offset to the middle of the element
+  const x = rect.x + rect.width / 2;
+  // Placed at the bottom of the element
+  const y = rect.y + rect.height;
+  return { x, y };
+}
+
+/**
+ * @param {Event} event
+ */
+function deriveAction(event) {
+  const target = /** @type {HTMLElement} */ (event.target);
+  const hitALink = !!target.closest("a");
+  if (target.closest("dfn:not([data-cite]), .index-term")) {
+    return hitALink ? "none" : "show";
+  }
+  if (target.closest(".dfn-panel")) {
+    if (hitALink) {
+      return target.classList.contains("self-link") ? "hide" : "dock";
+    }
+
+    const panel = /** @type {HTMLElement} */ (target.closest(".dfn-panel"));
+    return panel.classList.contains("docked") ? "hide" : "none";
+  }
+  if (document.querySelector(".dfn-panel:not([hidden])")) {
+    return "hide";
+  }
+  return "none";
+}
+
+/**
+ * @param {HTMLElement} dfn
+ * @param {HTMLElement} panel
+ * @param {{ x: number, y: number }} clickPosition
+ */
+function displayPanel(dfn, panel, { x, y }) {
+  panel.hidden = false;
+  // distance (px) between edge of panel and the pointing triangle (caret)
+  const MARGIN = 20;
+
+  const dfnRects = dfn.getClientRects();
+  // Find the `top` offset when the `dfn` can be spread across multiple lines
+  let closestTop = 0;
+  let minDiff = Infinity;
+  for (const rect of dfnRects) {
+    const { top, bottom } = rect;
+    const diffFromClickY = Math.abs((top + bottom) / 2 - y);
+    if (diffFromClickY < minDiff) {
+      minDiff = diffFromClickY;
+      closestTop = top;
+    }
+  }
+
+  const top = window.scrollY + closestTop + dfnRects[0].height;
+  const left = x - MARGIN;
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+
+  // Find if the panel is flowing out of the window
+  const panelRect = panel.getBoundingClientRect();
+  const SCREEN_WIDTH = Math.min(window.innerWidth, window.screen.width);
+  if (panelRect.right > SCREEN_WIDTH) {
+    const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
+    const newCaretOffset = left - newLeft;
+    panel.style.left = `${newLeft}px`;
+    /** @type {HTMLElement | null} */
+    const caret = panel.querySelector(".caret");
+    if (caret) caret.style.left = `${newCaretOffset}px`;
+  }
+
+  // As it's a dialog, we trap focus.
+  // TODO: when <dialog> becomes a implemented, we should really
+  // use that.
+  trapFocus(panel, dfn);
+}
+
+/**
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function trapFocus(panel, dfn) {
+  /** @type NodeListOf<HTMLAnchorElement> elements */
+  const anchors = panel.querySelectorAll("a[href]");
+  // No need to trap focus
+  if (!anchors.length) return;
+
+  // Move focus to first anchor element
+  const first = anchors.item(0);
+  first.focus();
+
+  const trapListener = createTrapListener(anchors, panel, dfn);
+  panel.addEventListener("keydown", trapListener);
+
+  // Hiding the panel releases the trap
+  const mo = new MutationObserver(records => {
+    const [record] = records;
+    const target = /** @type HTMLElement */ (record.target);
+    if (target.hidden) {
+      panel.removeEventListener("keydown", trapListener);
+      mo.disconnect();
+    }
+  });
+  mo.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+}
+
+/**
+ *
+ * @param {NodeListOf<HTMLAnchorElement>} anchors
+ * @param {HTMLElement} panel
+ * @param {HTMLElement} dfn
+ * @returns
+ */
+function createTrapListener(anchors, panel, dfn) {
+  const lastIndex = anchors.length - 1;
+  let currentIndex = 0;
+  /**
+   * @param {KeyboardEvent} event
+   */
+  return event => {
+    switch (event.key) {
+      // Hitting "Tab" traps us in a nice loop around elements.
+      case "Tab": {
+        event.preventDefault();
+        currentIndex += event.shiftKey ? -1 : +1;
+        if (currentIndex < 0) {
+          currentIndex = lastIndex;
+        } else if (currentIndex > lastIndex) {
+          currentIndex = 0;
+        }
+        anchors.item(currentIndex).focus();
+        break;
+      }
+
+      // Hitting "Enter" on an anchor releases the trap.
+      case "Enter":
+        hidePanel(panel);
+        break;
+
+      // Hitting "Escape" returns focus to dfn.
+      case "Escape":
+        hidePanel(panel);
+        dfn.focus();
+        return;
+    }
+  };
+}
+
+/** @param {HTMLElement | null} panel */
+function hidePanel(panel) {
+  if (!panel) return;
+  panel.hidden = true;
+  panel.classList.remove("docked");
+}
+})()</script><script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script></body></html>
