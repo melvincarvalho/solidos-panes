@@ -6,7 +6,7 @@
   <meta name="description" content="How SolidOS shows a Solid pod through panes: what a pane is, how one is chosen, how panes are registered, and how to write one.">
   <meta property="og:type" content="article">
   <meta property="og:title" content="SolidOS Panes">
-  <meta property="og:description" content="How SolidOS shows a Solid pod through panes: what a pane is, how one is chosen, how panes are registered, and how to write one. Draft Community Group Report, version 0.0.1.">
+  <meta property="og:description" content="How SolidOS shows a Solid pod through panes: what a pane is, how one is chosen, how panes are registered, and how to write one. Unofficial draft, version 0.0.1.">
   <meta property="og:url" content="https://melvincarvalho.github.io/solidos-panes/">
   <meta property="og:image" content="https://melvincarvalho.github.io/solidos-panes/og.png">
   <meta property="og:image:width" content="1200">
@@ -22,8 +22,7 @@
   <script class="remove">
     // All config options at https://respec.org/docs/
     var respecConfig = {
-      specStatus: "CG-DRAFT",
-      group: "solid",
+      specStatus: "unofficial",
       shortName: "solidos-panes",
       subtitle: "Version 0.0.1",
       editors: [
@@ -31,7 +30,11 @@
       ],
       github: "https://github.com/melvincarvalho/solidos-panes",
       edDraftURI: "https://melvincarvalho.github.io/solidos-panes/",
-      license: "w3c-software-doc",
+      // no licence is granted: replace ReSpec's default CC BY notice for unofficial drafts
+      postProcess: [function () {
+        var c = document.querySelector("p.copyright");
+        if (c) c.innerHTML = "Copyright © 2026 Melvin Carvalho.";
+      }],
       lint: { "no-unused-dfns": false },
       localBiblio: {
         "SOLIDOS": { title: "SolidOS", href: "https://github.com/SolidOS/solidos", publisher: "SolidOS team" },
@@ -60,7 +63,7 @@
 </section>
 
 <section id="sotd">
-  <p>This is version 0.0.1, dated 9 November 2026. It documents SolidOS as released at the end of September 2026: mashlib 3.0, solid-panes 5.0, pane-registry 5.0, solid-ui 5.0 and solid-logic 6.0. Where this document and the code disagree, the code is right and this document has a bug; please file an issue in this document's repository.</p>
+  <p>This is version 0.0.1, dated 9 November 2026; its status line and copyright notice were revised on 13 November 2026. It documents SolidOS as released at the end of September 2026: mashlib 3.0, solid-panes 5.0, pane-registry 5.0, solid-ui 5.0 and solid-logic 6.0. Where this document and the code disagree, the code is right and this document has a bug; please file an issue in this document's repository.</p>
   <p>The document was written after the SolidOS team meeting of 4 November 2026 [[SOLIDOS-MINUTES-2026-11-04]], where the question of a written pane interface came up. It is not adopted by the SolidOS team.</p>
 </section>
 
