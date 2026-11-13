@@ -47,7 +47,11 @@
         "MASHLIB": { title: "mashlib", href: "https://github.com/SolidOS/mashlib", publisher: "SolidOS team" },
         "RDFLIB": { title: "rdflib.js", href: "https://github.com/linkeddata/rdflib.js", publisher: "linkeddata" },
         "SOLID-PROTOCOL": { title: "Solid Protocol", href: "https://solidproject.org/TR/protocol", publisher: "W3C Solid Community Group" },
-        "SOLIDOS-MINUTES-2026-11-04": { title: "SolidOS team meeting, 4 November 2026", href: "https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md", publisher: "SolidOS team" }
+        "SOLIDOS-MINUTES-2026-11-04": { title: "SolidOS team meeting, 4 November 2026", href: "https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_04.md", publisher: "SolidOS team" },
+        "SOLIDOS-MINUTES-2026-11-11": { title: "SolidOS team meeting, 11 November 2026", href: "https://solidos.solidcommunity.net/public/SolidOS%20team%20meetings/2026/2026_11_11.md", publisher: "SolidOS team" },
+        "SOLID-PANES-103": { title: "Allow panes to be added dynamically (solid-panes issue 103)", href: "https://github.com/SolidOS/solid-panes/issues/103", publisher: "SolidOS team", date: "2019" },
+        "PANE-REGISTRY-28": { title: "Dynamically loading panes (pane-registry issue 28)", href: "https://github.com/SolidOS/pane-registry/issues/28", publisher: "SolidOS team", date: "2023" },
+        "SOLID-PANES-SPEC": { title: "Solid Panes: a module-based pane contract and type registry", href: "https://solid-panes.github.io/spec/", date: "2026" }
       }
     };
   </script>
@@ -63,7 +67,7 @@
 </section>
 
 <section id="sotd">
-  <p>This is version 0.0.1, dated 9 November 2026; its status line and copyright notice were revised on 13 November 2026. It documents SolidOS as released at the end of September 2026: mashlib 3.0, solid-panes 5.0, pane-registry 5.0, solid-ui 5.0 and solid-logic 6.0. Where this document and the code disagree, the code is right and this document has a bug; please file an issue in this document's repository.</p>
+  <p>This is version 0.0.1, dated 9 November 2026; its status line and copyright notice were revised on 13 November 2026. <a href="#dynamic"></a>, added the same day, is a proposal and does not describe current behaviour. It documents SolidOS as released at the end of September 2026: mashlib 3.0, solid-panes 5.0, pane-registry 5.0, solid-ui 5.0 and solid-logic 6.0. Where this document and the code disagree, the code is right and this document has a bug; please file an issue in this document's repository.</p>
   <p>The document was written after the SolidOS team meeting of 4 November 2026 [[SOLIDOS-MINUTES-2026-11-04]], where the question of a written pane interface came up. It is not adopted by the SolidOS team.</p>
 </section>
 
@@ -222,6 +226,102 @@ export default greetingPane</pre>
   <h2>Registration</h2>
   <p>The registry is the module <code>pane-registry</code>. <code>register(pane, requireQueryButton?)</code> sets <code>requireQueryButton</code> on the pane, then logs and returns without registering if the pane has no <code>name</code> or no <code>label</code>; otherwise it appends the pane to <code>list</code>, indexes it under its name if that name is free, under its icon if it has one, and under each key of <code>predicates</code>. It does not throw and returns nothing, so a caller cannot tell a refused pane from an accepted one except by the console. <code>byName(name)</code> scans the list and returns the first match, or warns and returns <code>null</code>.</p>
   <p>In the stock build the whole set is registered when <code>solid-panes</code> is imported: its entry point calls <code>registerPanes(register)</code>, which imports each pane and registers it in a fixed order with the comment "earliest panes have priority". 37 calls are present, one of them conditional on an export that does not exist, so 36 panes are registered; about fifteen more are present but commented out. <code>register</code> is exported from <code>solid-panes</code>, so a host can register further panes at runtime without editing the file.</p>
+</section>
+
+<section id="dynamic" class="informative">
+  <h2>Loading panes dynamically</h2>
+  <p class="note" title="This section is a proposal">Everything else in this document describes what SolidOS does today. This section does not. SolidOS as released registers its panes when it is built (<a href="#registration"></a>) and has no mechanism for loading a pane named in a user's data. What follows is a sketch of one, written down so that it can be discussed and corrected. Nothing here is implemented in SolidOS, and the terms in the data examples are illustrative.</p>
+
+  <section id="dynamic-background">
+    <h3>Background</h3>
+    <p>The wish is old. The <code>pane-registry</code> README, as quoted in [[PANE-REGISTRY-28]], hopes for panes loaded according to user configuration preferences, and two open issues ask for it: one from 2019 proposing panes that are added from outside the bundle and described in RDF [[SOLID-PANES-103]], and one from 2023 describing a working but awkward way to register a pane from a page in the user's pod [[PANE-REGISTRY-28]].</p>
+    <p>At the SolidOS team meeting of 11 November 2026 it was raised again as a goal [[SOLIDOS-MINUTES-2026-11-11]]. The outline recorded there is: load a pane's JavaScript from the web; describe the pane in a small data file that points to its icon and its code; keep the list of panes a person uses in their profile; choose a pane by RDF class; have the loader call the existing <code>register</code>; and deal with trust once loading works. The rest of this section follows that outline.</p>
+  </section>
+
+  <section id="dynamic-module">
+    <h3>A pane as a module</h3>
+    <p>A dynamically loaded pane is an ES module at a URL whose default export is a pane as defined in <a href="#the-pane"></a>: the same four members, the same optional members, the same context. Nothing about the pane itself changes; only how it reaches the registry. The example in <a href="#example-pane"></a> is already in this form.</p>
+    <p>One constraint follows from loading outside the build. A pane compiled into SolidOS shares the application's single store, session and UI library. A module fetched at run time does not get them by importing its own copies: a second copy of solid-logic has a second, empty store and no login. A dynamically loaded pane therefore takes what it needs from the <code>context</code> it is handed (<code>context.session.store</code>, <code>context.session.logic</code>, <code>context.dom</code>) and does not bundle rdflib, solid-logic or solid-ui. In the current mashlib source the shared instances are also set as page globals (<code>$rdf</code>, <code>SolidLogic</code>, and the solid-panes module as <code>panes</code>), which is what makes a call to <code>panes.register</code> from a loaded script possible at all.</p>
+  </section>
+
+  <section id="dynamic-description">
+    <h3>Describing a pane</h3>
+    <p>So that SolidOS can decide whether to load a pane without running it, and so that a person can see what they are being offered, a pane has a description as data. The minimum is a name, the module URL, an icon, and the classes the pane is meant for:</p>
+    <pre class="turtle">
+@prefix ex: &lt;https://example.org/pane#&gt; .      # illustrative terms, not a published vocabulary
+@prefix schema: &lt;http://schema.org/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+&lt;#this&gt; a ex:Pane ;
+    ex:name "quiz" ;
+    ex:module &lt;quiz-pane.js&gt; ;
+    ex:icon &lt;quiz.svg&gt; ;
+    ex:forClass schema:Quiz ;
+    schema:description "Shows a quiz and records the answers in the pod." ;
+    foaf:maker &lt;https://alice.example/profile/card#me&gt; .</pre>
+    <p>The class list is a hint for the loader, not the test. Whether a pane applies to a subject is still decided by its <code>label</code>, as in <a href="#selection"></a>; a pane loaded for <code>schema:Quiz</code> that returns <code>null</code> for a given quiz is simply not offered.</p>
+  </section>
+
+  <section id="dynamic-list">
+    <h3>A person's list of panes</h3>
+    <p>The panes a person has chosen are listed in their own data, so that the choice follows them from one SolidOS installation to another. The preferences file is the natural home: it is already where SolidOS keeps per-user settings such as workspaces (<a href="#creating"></a>), and unlike the public profile it is private by default.</p>
+    <pre class="turtle">
+@prefix ex: &lt;https://example.org/pane#&gt; .      # illustrative
+
+&lt;/profile/card#me&gt; ex:usesPane
+    &lt;https://alice.example/public/panes/quiz.ttl#this&gt; ,
+    &lt;https://bob.example/panes/recipe.ttl#this&gt; .</pre>
+  </section>
+
+  <section id="dynamic-loading">
+    <h3>Loading and registering</h3>
+    <p>After login, once the preferences file has been read:</p>
+    <ol>
+      <li>Read the person's list of panes.</li>
+      <li>For each, fetch its description. Skip it if the description cannot be read or has no module.</li>
+      <li>Import the module. Skip it if the import fails or the default export has no <code>name</code>, <code>label</code> or <code>render</code>.</li>
+      <li>Call <code>register</code> with the pane.</li>
+      <li>Refresh the view of the current subject, since the set of relevant panes may have changed.</li>
+    </ol>
+    <pre class="js">
+// Sketch only. `descriptions` is the list read from the preferences file,
+// already reduced to { name, module } pairs.
+async function loadPanes (descriptions, register) {
+  for (const d of descriptions) {
+    try {
+      const pane = (await import(d.module)).default
+      if (pane && pane.name && typeof pane.label === 'function' &&
+          typeof pane.render === 'function') {
+        register(pane)
+      } else {
+        console.warn('Not a pane, skipped: ' + d.module)
+      }
+    } catch (err) {
+      console.warn('Pane failed to load, skipped: ' + d.module, err)
+    }
+  }
+}</pre>
+    <p>A pane that fails at any step is skipped and the rest continue; a broken or unreachable pane must never stop SolidOS from starting. This mirrors how <code>register</code> already treats a pane with no name or label (<a href="#registration"></a>).</p>
+    <p class="note">Order matters, and it works against a loaded pane. <code>register</code> appends, and selection is first match in registration order (<a href="#selection"></a>), so a pane registered after the 36 built-in ones is offered as a tab but is never the first view for a subject that a built-in pane also claims, unless it implements <code>shouldGetFocus</code>. The workaround reported in [[PANE-REGISTRY-28]] is to put the pane at the front of the registry's list by hand. A real mechanism needs a deliberate rule here; see <a href="#dynamic-open"></a>.</p>
+  </section>
+
+  <section id="dynamic-security">
+    <h3>Security considerations</h3>
+    <p>A pane is not sandboxed. A loaded module runs in the same page as SolidOS, with the logged-in session: it can read and write whatever the person can, on every pod they have access to, and it can change what the page shows. Adding a pane is therefore an act of trust comparable to installing a browser extension, and the list in <a href="#dynamic-list"></a> is as sensitive as a password: anyone who can write to it can run code as that person.</p>
+    <p>The meeting set trust aside until loading works, and so does this sketch, but three consequences are already clear. The list must live in a document only its owner can write. SolidOS should show what it is about to load, and from where, before the first load of a pane, not after. And a pane's description should say who made it, so that a person, and later a rating or signing scheme such as the one proposed in [[SOLID-PANES-103]], has something to judge.</p>
+  </section>
+
+  <section id="dynamic-open">
+    <h3>Open questions</h3>
+    <ul>
+      <li>Vocabulary: which terms describe a pane and a person's list of panes, and in which namespace?</li>
+      <li>Location: the preferences file, as proposed here, the profile, as recorded in the minutes, or the type index, which already maps classes to places?</li>
+      <li>Precedence: may a loaded pane come before a built-in pane for the same subject, and who decides: the pane, its description, or the person?</li>
+      <li>Timing: load every listed pane at start-up, or load a pane the first time a subject of one of its classes is shown?</li>
+      <li>Versions: how does a pane say which version of the context it was written for, and what happens when SolidOS moves on?</li>
+      <li>Other contracts: a simpler module contract, with <code>canHandle</code> in place of <code>label</code> and a registry indexed by type, is described in [[SOLID-PANES-SPEC]]. Could one loader accept both?</li>
+    </ul>
+  </section>
 </section>
 
 <section id="creating">
