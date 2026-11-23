@@ -4,10 +4,13 @@ An unofficial draft describing how SolidOS shows a Solid pod through panes: what
 
 Read it: https://melvincarvalho.github.io/solidos-panes/
 
+Building something? [SKILL.md](SKILL.md) is the short practical guide, for people and for LLMs: a pane in 30 lines, the rules, loading, the tool index, testing, getting listed in the store, and examples.
+
 Corrections welcome as issues or pull requests. The document may move under the SolidOS organisation later; this repository will then redirect.
 
 ## Files
 
+- `SKILL.md`: the practical guide to building and listing panes and apps.
 - `source.html`: the ReSpec source. Edit this one.
 - `index.html`: the published page, a static build of `source.html` so it reads without any script. Rebuild after editing the source:
 
